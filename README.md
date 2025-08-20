@@ -62,3 +62,156 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+# POS System
+
+A modern Point of Sale system built with Laravel 8 and Vue.js 2.
+
+## Features
+
+- User authentication and role-based access control
+- Product management with image uploads
+- Inventory tracking
+- Point of Sale interface
+- Sales reporting and analytics
+- Receipt generation and printing
+- GCash payment integration
+
+## Local Development
+
+### Prerequisites
+
+- PHP 8.1+
+- Composer
+- Node.js and npm
+- Railway database (already configured)
+
+### Installation
+
+1. Clone the repository
+```bash
+git clone <repository-url>
+cd pos
+```
+
+2. Install PHP dependencies
+```bash
+composer install
+```
+
+3. Install Node.js dependencies
+```bash
+npm install
+```
+
+4. Copy environment file
+```bash
+cp .env.example .env
+```
+
+5. Configure your Railway database in `.env`
+```env
+DB_CONNECTION=mysql
+DB_HOST=gondola.proxy.rlwy.net
+DB_PORT=14668
+DB_DATABASE=railway
+DB_USERNAME=root
+DB_PASSWORD=BYwycoigujQGKRloFfbWIotCZfaIKWrZ
+```
+
+6. Generate application key
+```bash
+php artisan key:generate
+```
+
+7. Run migrations and seeders
+```bash
+php artisan migrate --seed
+```
+
+8. Build assets
+```bash
+npm run dev
+```
+
+9. Start the development server
+```bash
+php artisan serve
+```
+
+### Using Docker Compose
+
+1. Build and start services
+```bash
+docker-compose up -d
+```
+
+2. Run migrations
+```bash
+docker-compose exec app php artisan migrate --seed
+```
+
+3. Build assets
+```bash
+docker-compose exec app npm run dev
+```
+
+## Deployment to Render
+
+### Option 1: Using render.yaml (Recommended)
+
+1. Push your code to a Git repository
+2. Connect your repository to Render
+3. Render will automatically detect the `render.yaml` file and deploy
+
+### Option 2: Manual Deployment
+
+1. Create a new Web Service on Render
+2. Choose "Docker" as the environment
+3. Set the Dockerfile path to `./Dockerfile`
+4. Configure environment variables:
+   - `APP_ENV=production`
+   - `APP_DEBUG=false`
+   - `APP_KEY` (generate a new one)
+   - Railway database credentials (already configured in render.yaml)
+   - Cloudinary credentials
+
+### Environment Variables for Production
+
+```env
+APP_ENV=production
+APP_DEBUG=false
+APP_KEY=base64:your-generated-key
+DB_CONNECTION=mysql
+DB_HOST=gondola.proxy.rlwy.net
+DB_PORT=14668
+DB_DATABASE=railway
+DB_USERNAME=root
+DB_PASSWORD=BYwycoigujQGKRloFfbWIotCZfaIKWrZ
+CLOUDINARY_URL=your-cloudinary-url
+CLOUDINARY_UPLOAD_PRESET=your-upload-preset
+```
+
+## Database Setup
+
+The system uses a Railway MySQL database with the following tables:
+- `users` - User accounts and authentication
+- `categories` - Product categories
+- `products` - Product inventory
+- `sales` - Sales transactions
+- `sale_items` - Individual items in sales
+- `payments` - Payment records
+- `inventory_movements` - Stock movement tracking
+
+## API Endpoints
+
+- `POST /api/login` - User authentication
+- `GET /api/products` - List products
+- `POST /api/products` - Create product
+- `GET /api/sales` - List sales (paid only)
+- `POST /api/sales` - Create sale
+- `GET /api/reports/*` - Various reports
+
+## License
+
+This project is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
