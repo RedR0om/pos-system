@@ -56,8 +56,8 @@ LOG_DEPRECATIONS_CHANNEL=null\n\
 LOG_LEVEL=debug\n\
 \n\
 DB_CONNECTION=mysql\n\
-DB_HOST=\${DB_HOST:-mysql.railway.internal}\n\
-DB_PORT=\${DB_PORT:-3306}\n\
+DB_HOST=\${DB_HOST:-gondola.proxy.rlwy.net}\n\
+DB_PORT=\${DB_PORT:-14668}\n\
 DB_DATABASE=\${DB_DATABASE:-railway}\n\
 DB_USERNAME=\${DB_USERNAME:-root}\n\
 DB_PASSWORD=\${DB_PASSWORD:-BYwycoigujQGKRloFfbWIotCZfaIKWrZ}\n\
