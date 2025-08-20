@@ -15,9 +15,9 @@ services:
       - key: DB_CONNECTION
         value: mysql
       - key: DB_HOST
-        value: gondola.proxy.rlwy.net
+        value: mysql.railway.internal
       - key: DB_PORT
-        value: 14668
+        value: 3306
       - key: DB_DATABASE
         value: railway
       - key: DB_USERNAME
