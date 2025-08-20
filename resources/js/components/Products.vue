@@ -46,6 +46,26 @@
           <b-button size="sm" variant="outline-danger" @click="remove(item)">Delete</b-button>
         </template>
       </b-table>
+      
+      <!-- Pagination -->
+      <div class="d-flex justify-content-between align-items-center mt-3">
+        <div class="text-muted">
+          Showing {{ products.from || 0 }} to {{ products.to || 0 }} of {{ products.total || 0 }} products
+        </div>
+        <b-pagination
+          v-model="currentPage"
+          :total-rows="products.total || 0"
+          :per-page="products.per_page || 15"
+          :page="currentPage"
+          @change="load"
+          align="center"
+          size="sm"
+          first-text="«"
+          last-text="»"
+          prev-text="‹"
+          next-text="›"
+        />
+      </div>
     </b-card>
   </b-container>
   </template>
@@ -57,7 +77,8 @@ export default {
   name: 'Products',
   data() {
     return {
-      products: { data: [] },
+      products: { data: [], total: 0, per_page: 15, current_page: 1, last_page: 1, from: 0, to: 0 },
+      currentPage: 1,
       form: { id: null, sku: '', name: '', category_id: null, price: 0, stock: 0, description: '', image_file: null },
       loading: false,
       fields: [
@@ -71,7 +92,7 @@ export default {
     }
   },
   created() {
-    this.load();
+    this.load(1);
     this.loadCategories();
   },
   methods: {
@@ -82,6 +103,7 @@ export default {
       } catch (_) {}
     },
     load(page = 1) {
+      this.currentPage = page;
       axios.get('/api/products?page=' + page)
         .then(res => {
           this.products = res.data;
@@ -124,7 +146,7 @@ export default {
           this.resetForm();
           Swal.fire({ icon: 'success', title: 'Saved', timer: 1200, showConfirmButton: false });
           this.$bvModal.hide('product-modal');
-          return this.load();
+          return this.load(this.currentPage);
         })
         .catch(e => {
           let msg = 'Save failed';
@@ -158,7 +180,7 @@ export default {
         axios.delete('/api/products/' + p.id)
           .then(() => {
             Swal.fire({ icon: 'success', title: 'Deleted', timer: 1000, showConfirmButton: false });
-            this.load();
+            this.load(this.currentPage);
           })
           .catch(e => {
             const msg = (e.response && (e.response.data.message || JSON.stringify(e.response.data))) || e.message;

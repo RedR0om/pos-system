@@ -257,6 +257,8 @@ var render = function render() {
       attrs: {
         "no-body": ""
       }
+    }, [_c("div", {
+      staticClass: "product-image-container"
     }, [_c("b-img", {
       staticClass: "product-thumb",
       attrs: {
@@ -264,18 +266,17 @@ var render = function render() {
         alt: "",
         fluid: ""
       }
-    }), _vm._v(" "), _c("div", {
-      staticClass: "p-2 d-flex flex-column gap-1"
-    }, [_c("div", {
+    })], 1), _vm._v(" "), _c("div", {
+      staticClass: "product-info"
+    }, [_c("b-row", [_c("b-col", [_c("div", {
       staticClass: "product-title text-truncate",
       attrs: {
         title: p.name
       }
     }, [_vm._v(_vm._s(p.name))]), _vm._v(" "), _c("div", {
-      staticClass: "d-flex justify-content-between align-items-center"
-    }, [_c("div", {
-      staticClass: "h6 mb-0"
-    }, [_vm._v(_vm._s(Number(p.price).toFixed(2)))]), _vm._v(" "), _c("b-button", {
+      staticClass: "product-price"
+    }, [_vm._v("₱" + _vm._s(Number(p.price).toFixed(2)))])]), _vm._v(" "), _c("b-col", [_c("b-button", {
+      staticClass: "add-btn",
       attrs: {
         size: "sm",
         variant: "primary"
@@ -285,7 +286,9 @@ var render = function render() {
           return _vm.addProduct(p);
         }
       }
-    }, [_vm._v("Add")])], 1)])], 1)], 1);
+    }, [_c("i", {
+      staticClass: "fas fa-plus"
+    }), _vm._v(" Add\n                  ")])], 1)], 1)], 1)])], 1);
   }), 1)], 1), _vm._v(" "), _c("b-col", {
     attrs: {
       lg: "4"
@@ -429,7 +432,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.product-card[data-v-0349ff8e] { border: 1px solid #e5e7eb; border-radius: .5rem; overflow: hidden;\n}\n.product-thumb[data-v-0349ff8e] { width: 100%; height: 180px; -o-object-fit: contain; object-fit: contain; background: #fff; padding: 8px;\n}\n.product-title[data-v-0349ff8e] { font-weight: 600; font-size: .95rem;\n}\n@media (min-width: 992px) { /* lg */\n.product-thumb[data-v-0349ff8e] { height: 180px;\n}\n}\n@media (max-width: 575.98px) {\n.product-thumb[data-v-0349ff8e] { height: 150px;\n}\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.product-card[data-v-0349ff8e] { \r\n  border: none; \r\n  border-radius: 12px; \r\n  overflow: hidden; \r\n  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);\r\n  transition: all 0.3s ease;\r\n  background: #fff;\n}\n.product-card[data-v-0349ff8e]:hover {\r\n  transform: translateY(-2px);\r\n  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);\n}\n.product-image-container[data-v-0349ff8e] { \r\n  position: relative; \r\n  width: 100%; \r\n  height: 180px; \r\n  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);\r\n  padding: 12px;\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: center;\n}\n.product-thumb[data-v-0349ff8e] { \r\n  width: 100%; \r\n  height: 100%; \r\n  -o-object-fit: contain; \r\n     object-fit: contain;\r\n  border-radius: 8px;\n}\n.product-info[data-v-0349ff8e] { \r\n  background: linear-gradient(135deg, #374151 0%, #4b5563 100%);\r\n  color: #fff;\r\n  padding: 16px;\r\n  position: relative;\n}\n.product-title[data-v-0349ff8e] { \r\n  font-weight: 600; \r\n  font-size: 1rem; \r\n  margin-bottom: 8px;\r\n  color: #f9fafb;\r\n  line-height: 1.3;\n}\n.product-price[data-v-0349ff8e] { \r\n  font-size: 1.25rem; \r\n  font-weight: bold; \r\n  margin-bottom: 12px;\r\n  color: #10b981;\r\n  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);\n}\n.add-btn[data-v-0349ff8e] { \r\n  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);\r\n  border: none;\r\n  color: #fff;\r\n  padding: 8px 16px;\r\n  border-radius: 8px;\r\n  font-weight: 600;\r\n  transition: all 0.2s ease;\r\n  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);\n}\n.add-btn[data-v-0349ff8e]:hover {\r\n  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);\r\n  transform: translateY(-1px);\r\n  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);\n}\n.add-btn i[data-v-0349ff8e] { \r\n  margin-right: 6px;\n}\n@media (min-width: 992px) { /* lg */\n.product-image-container[data-v-0349ff8e] { height: 200px;\n}\n}\n@media (max-width: 575.98px) {\n.product-image-container[data-v-0349ff8e] { height: 160px;\n}\n.product-info[data-v-0349ff8e] { padding: 12px;\n}\n.product-title[data-v-0349ff8e] { font-size: 0.9rem;\n}\n.product-price[data-v-0349ff8e] { font-size: 1.1rem;\n}\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

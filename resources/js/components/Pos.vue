@@ -5,13 +5,21 @@
         <b-row>
           <b-col sm="6" md="3" v-for="p in products" :key="p.id" class="mb-3">
             <b-card class="product-card h-100" no-body>
-              <b-img :src="p.image_url || placeholder" alt="" class="product-thumb" fluid />
-              <div class="p-2 d-flex flex-column gap-1">
-                <div class="product-title text-truncate" :title="p.name">{{ p.name }}</div>
-                <div class="d-flex justify-content-between align-items-center">
-                  <div class="h6 mb-0">{{ Number(p.price).toFixed(2) }}</div>
-                  <b-button size="sm" variant="primary" @click="addProduct(p)">Add</b-button>
-                </div>
+              <div class="product-image-container">
+                <b-img :src="p.image_url || placeholder" alt="" class="product-thumb" fluid />
+              </div>
+              <div class="product-info">
+                <b-row>
+                  <b-col>
+                    <div class="product-title text-truncate" :title="p.name">{{ p.name }}</div>
+                    <div class="product-price">₱{{ Number(p.price).toFixed(2) }}</div>
+                  </b-col>
+                  <b-col>
+                    <b-button size="sm" variant="primary" class="add-btn" @click="addProduct(p)">
+                      <i class="fas fa-plus"></i> Add
+                    </b-button>
+                  </b-col>
+                </b-row>
               </div>
             </b-card>
           </b-col>
@@ -187,14 +195,91 @@ export default {
 </script>
 
 <style scoped>
-.product-card { border: 1px solid #e5e7eb; border-radius: .5rem; overflow: hidden; }
-.product-thumb { width: 100%; height: 180px; object-fit: contain; background: #fff; padding: 8px; }
-.product-title { font-weight: 600; font-size: .95rem; }
-@media (min-width: 992px) { /* lg */
-  .product-thumb { height: 180px; }
+.product-card { 
+  border: none; 
+  border-radius: 12px; 
+  overflow: hidden; 
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+  background: #fff;
 }
+
+.product-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.product-image-container { 
+  position: relative; 
+  width: 100%; 
+  height: 180px; 
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.product-thumb { 
+  width: 100%; 
+  height: 100%; 
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.product-info { 
+  background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
+  color: #fff;
+  padding: 16px;
+  position: relative;
+}
+
+.product-title { 
+  font-weight: 600; 
+  font-size: 1rem; 
+  margin-bottom: 8px;
+  color: #f9fafb;
+  line-height: 1.3;
+}
+
+.product-price { 
+  font-size: 1.25rem; 
+  font-weight: bold; 
+  margin-bottom: 12px;
+  color: #10b981;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.add-btn { 
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  border: none;
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.add-btn:hover {
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.add-btn i { 
+  margin-right: 6px; 
+}
+
+@media (min-width: 992px) { /* lg */
+  .product-image-container { height: 200px; }
+}
+
 @media (max-width: 575.98px) {
-  .product-thumb { height: 150px; }
+  .product-image-container { height: 160px; }
+  .product-info { padding: 12px; }
+  .product-title { font-size: 0.9rem; }
+  .product-price { font-size: 1.1rem; }
 }
 </style>
 

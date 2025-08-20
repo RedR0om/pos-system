@@ -12,6 +12,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var chart_js_auto__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! chart.js/auto */ "./node_modules/chart.js/auto/auto.mjs");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_1__);
 function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
@@ -23,6 +25,7 @@ function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { 
 function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
 function _asyncToGenerator(n) { return function () { var t = this, e = arguments; return new Promise(function (r, o) { var a = n.apply(t, e); function _next(n) { asyncGeneratorStep(a, r, o, _next, _throw, "next", n); } function _throw(n) { asyncGeneratorStep(a, r, o, _next, _throw, "throw", n); } _next(void 0); }); }; }
 
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: 'Dashboard',
   data: function data() {
@@ -30,7 +33,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       summary: {
         total: 0,
         count: 0,
-        tax: 0
+        subtotal: 0
       },
       charts: {
         bar: null,
@@ -49,6 +52,11 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
           }
         },
         sales: {
+          paid_total: 0,
+          today: {
+            count: 0,
+            total: 0
+          },
           recent: [],
           top_products: []
         }
@@ -64,128 +72,154 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
           case 0:
             _context.p = 0;
             _context.n = 1;
-            return fetch('/api/reports/sales-summary');
+            return axios__WEBPACK_IMPORTED_MODULE_1___default().get('/api/reports/sales-summary');
           case 1:
             res = _context.v;
-            _context.n = 2;
-            return res.json();
-          case 2:
-            _this.summary = _context.v;
-            _context.n = 4;
+            _this.summary = res.data.data || {
+              total: 0,
+              count: 0,
+              subtotal: 0
+            };
+            _context.n = 3;
             break;
-          case 3:
-            _context.p = 3;
+          case 2:
+            _context.p = 2;
             _t = _context.v;
-          case 4:
+            console.error('Failed to load sales summary:', _t);
+            _this.summary = {
+              total: 0,
+              count: 0,
+              subtotal: 0
+            };
+          case 3:
             _this.loadCharts();
             _this.loadSummary();
-          case 5:
+          case 4:
             return _context.a(2);
         }
-      }, _callee, null, [[0, 3]]);
+      }, _callee, null, [[0, 2]]);
     }))();
+  },
+  beforeDestroy: function beforeDestroy() {
+    // Clean up charts to prevent memory leaks
+    if (this.charts.bar) {
+      this.charts.bar.destroy();
+    }
+    if (this.charts.pie) {
+      this.charts.pie.destroy();
+    }
   },
   methods: {
     loadCharts: function loadCharts() {
       var _this2 = this;
       return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2() {
-        var _yield$Promise$all, _yield$Promise$all2, byDayRes, byCatRes, byDay, byCat;
+        var _yield$Promise$all, _yield$Promise$all2, byDayRes, byCatRes, byDay, byCat, _t2;
         return _regenerator().w(function (_context2) {
-          while (1) switch (_context2.n) {
+          while (1) switch (_context2.p = _context2.n) {
             case 0:
+              _context2.p = 0;
               _context2.n = 1;
-              return Promise.all([fetch('/api/reports/sales-by-day'), fetch('/api/reports/sales-by-category')]);
+              return Promise.all([axios__WEBPACK_IMPORTED_MODULE_1___default().get('/api/reports/sales-by-day'), axios__WEBPACK_IMPORTED_MODULE_1___default().get('/api/reports/sales-by-category')]);
             case 1:
               _yield$Promise$all = _context2.v;
               _yield$Promise$all2 = _slicedToArray(_yield$Promise$all, 2);
               byDayRes = _yield$Promise$all2[0];
               byCatRes = _yield$Promise$all2[1];
-              _context2.n = 2;
-              return byDayRes.json();
-            case 2:
-              byDay = _context2.v;
-              _context2.n = 3;
-              return byCatRes.json();
-            case 3:
-              byCat = _context2.v;
+              byDay = byDayRes.data;
+              byCat = byCatRes.data;
               if (_this2.charts.bar) _this2.charts.bar.destroy();
-              _this2.charts.bar = new chart_js_auto__WEBPACK_IMPORTED_MODULE_0__["default"](_this2.$refs.bar.getContext('2d'), {
-                type: 'bar',
-                data: {
-                  labels: byDay.labels,
-                  datasets: [{
-                    label: 'Sales',
-                    data: byDay.data,
-                    backgroundColor: '#4e73df'
-                  }]
-                },
-                options: {
-                  scales: {
-                    y: {
-                      beginAtZero: true
-                    }
+              if (_this2.$refs.bar) {
+                _this2.charts.bar = new chart_js_auto__WEBPACK_IMPORTED_MODULE_0__["default"](_this2.$refs.bar.getContext('2d'), {
+                  type: 'bar',
+                  data: {
+                    labels: byDay.data && byDay.data.map(function (d) {
+                      return d.date;
+                    }) || [],
+                    datasets: [{
+                      label: 'Sales',
+                      data: byDay.data && byDay.data.map(function (d) {
+                        return d.amount;
+                      }) || [],
+                      backgroundColor: '#4e73df'
+                    }]
                   },
-                  plugins: {
-                    legend: {
-                      display: false
+                  options: {
+                    scales: {
+                      y: {
+                        beginAtZero: true
+                      }
+                    },
+                    plugins: {
+                      legend: {
+                        display: false
+                      }
                     }
                   }
-                }
-              });
+                });
+              }
               if (_this2.charts.pie) _this2.charts.pie.destroy();
-              _this2.charts.pie = new chart_js_auto__WEBPACK_IMPORTED_MODULE_0__["default"](_this2.$refs.pie.getContext('2d'), {
-                type: 'pie',
-                data: {
-                  labels: byCat.labels,
-                  datasets: [{
-                    data: byCat.data,
-                    backgroundColor: ['#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b', '#858796', '#4e73df']
-                  }]
-                },
-                options: {
-                  plugins: {
-                    legend: {
-                      position: 'bottom'
+              if (_this2.$refs.pie) {
+                _this2.charts.pie = new chart_js_auto__WEBPACK_IMPORTED_MODULE_0__["default"](_this2.$refs.pie.getContext('2d'), {
+                  type: 'pie',
+                  data: {
+                    labels: byCat.data && byCat.data.map(function (d) {
+                      return d.category;
+                    }) || [],
+                    datasets: [{
+                      data: byCat.data && byCat.data.map(function (d) {
+                        return d.amount;
+                      }) || [],
+                      backgroundColor: ['#1cc88a', '#36b9cc', '#f6c23e', '#e74a3b', '#858796', '#4e73df']
+                    }]
+                  },
+                  options: {
+                    plugins: {
+                      legend: {
+                        position: 'bottom'
+                      }
                     }
                   }
-                }
-              });
-            case 4:
+                });
+              }
+              _context2.n = 3;
+              break;
+            case 2:
+              _context2.p = 2;
+              _t2 = _context2.v;
+              console.error('Failed to load charts:', _t2);
+            case 3:
               return _context2.a(2);
           }
-        }, _callee2);
+        }, _callee2, null, [[0, 2]]);
       }))();
     },
     loadSummary: function loadSummary() {
       var _this3 = this;
       return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee3() {
-        var res, d, _t2;
+        var res, _t3;
         return _regenerator().w(function (_context3) {
           while (1) switch (_context3.p = _context3.n) {
             case 0:
               _context3.p = 0;
               _context3.n = 1;
-              return fetch('/api/reports/dashboard-summary');
+              return axios__WEBPACK_IMPORTED_MODULE_1___default().get('/api/reports/dashboard-summary');
             case 1:
               res = _context3.v;
-              _context3.n = 2;
-              return res.json();
-            case 2:
-              d = _context3.v;
-              _this3.extra = d;
-              _context3.n = 4;
+              _this3.extra = res.data;
+              _context3.n = 3;
               break;
+            case 2:
+              _context3.p = 2;
+              _t3 = _context3.v;
+              console.error('Failed to load dashboard summary:', _t3);
             case 3:
-              _context3.p = 3;
-              _t2 = _context3.v;
-            case 4:
               return _context3.a(2);
           }
-        }, _callee3, null, [[0, 3]]);
+        }, _callee3, null, [[0, 2]]);
       }))();
     },
     firstItemName: function firstItemName(sale) {
-      if (sale.items && sale.items.length && sale.items[0].product) {
+      if (sale.items && sale.items.length && sale.items[0] && sale.items[0].product) {
         return sale.items[0].product.name;
       }
       return '#' + sale.id;
@@ -237,7 +271,7 @@ var render = function render() {
     staticClass: "text-muted"
   }, [_vm._v("Total Sales")]), _vm._v(" "), _c("div", {
     staticClass: "display-6"
-  }, [_vm._v(_vm._s(Number(_vm.summary.total).toFixed(2)))])])], 1), _vm._v(" "), _c("b-col", {
+  }, [_vm._v("₱" + _vm._s(Number(_vm.summary.total || 0).toFixed(2)))])])], 1), _vm._v(" "), _c("b-col", {
     attrs: {
       md: "4"
     }
@@ -250,7 +284,20 @@ var render = function render() {
     staticClass: "text-muted"
   }, [_vm._v("Transactions")]), _vm._v(" "), _c("div", {
     staticClass: "display-6"
-  }, [_vm._v(_vm._s(_vm.summary.count))])])], 1)], 1), _vm._v(" "), _c("b-row", [_c("b-col", {
+  }, [_vm._v(_vm._s(_vm.summary.count || 0))])])], 1), _vm._v(" "), _c("b-col", {
+    attrs: {
+      md: "4"
+    }
+  }, [_c("b-card", {
+    staticClass: "mb-3",
+    attrs: {
+      "body-class": "py-3"
+    }
+  }, [_c("div", {
+    staticClass: "text-muted"
+  }, [_vm._v("Today's Sales")]), _vm._v(" "), _c("div", {
+    staticClass: "display-6"
+  }, [_vm._v("₱" + _vm._s(Number(_vm.extra.sales && _vm.extra.sales.today && _vm.extra.sales.today.total || 0).toFixed(2)))])])], 1)], 1), _vm._v(" "), _c("b-row", [_c("b-col", {
     attrs: {
       md: "8"
     }
@@ -282,17 +329,17 @@ var render = function render() {
     }
   }, [_c("div", {
     staticClass: "d-flex justify-content-between"
-  }, [_c("span", [_vm._v("Total Products")]), _c("strong", [_vm._v(_vm._s(_vm.extra.inventory.total_products))])]), _vm._v(" "), _c("div", {
+  }, [_c("span", [_vm._v("Total Products")]), _c("strong", [_vm._v(_vm._s(_vm.extra.inventory && _vm.extra.inventory.total_products || 0))])]), _vm._v(" "), _c("div", {
     staticClass: "d-flex justify-content-between"
-  }, [_c("span", [_vm._v("Low Stock (≤5)")]), _c("strong", [_vm._v(_vm._s(_vm.extra.inventory.low_stock))])]), _vm._v(" "), _c("div", {
+  }, [_c("span", [_vm._v("Low Stock (≤5)")]), _c("strong", [_vm._v(_vm._s(_vm.extra.inventory && _vm.extra.inventory.low_stock || 0))])]), _vm._v(" "), _c("div", {
     staticClass: "d-flex justify-content-between"
-  }, [_c("span", [_vm._v("Categories")]), _c("strong", [_vm._v(_vm._s(_vm.extra.inventory.total_categories))])]), _vm._v(" "), _c("div", {
+  }, [_c("span", [_vm._v("Categories")]), _c("strong", [_vm._v(_vm._s(_vm.extra.inventory && _vm.extra.inventory.total_categories || 0))])]), _vm._v(" "), _c("div", {
     staticClass: "d-flex justify-content-between"
-  }, [_c("span", [_vm._v("Stock on Hand")]), _c("strong", [_vm._v(_vm._s(_vm.extra.inventory.stock_on_hand))])]), _vm._v(" "), _c("div", {
+  }, [_c("span", [_vm._v("Stock on Hand")]), _c("strong", [_vm._v(_vm._s(_vm.extra.inventory && _vm.extra.inventory.stock_on_hand || 0))])]), _vm._v(" "), _c("div", {
     staticClass: "d-flex justify-content-between"
-  }, [_c("span", [_vm._v("Stock Value")]), _c("strong", [_vm._v(_vm._s(Number(_vm.extra.inventory.stock_value).toFixed(2)))])]), _vm._v(" "), _c("div", {
+  }, [_c("span", [_vm._v("Stock Value")]), _c("strong", [_vm._v("₱" + _vm._s(Number(_vm.extra.inventory && _vm.extra.inventory.stock_value || 0).toFixed(2)))])]), _vm._v(" "), _c("div", {
     staticClass: "d-flex justify-content-between"
-  }, [_c("span", [_vm._v("Movements (7d)")]), _c("strong", [_vm._v("In: " + _vm._s(_vm.extra.inventory.movements_last7["in"]) + " | Out: " + _vm._s(_vm.extra.inventory.movements_last7.out))])])])], 1), _vm._v(" "), _c("b-col", {
+  }, [_c("span", [_vm._v("Movements (7d)")]), _c("strong", [_vm._v("In: " + _vm._s(_vm.extra.inventory && _vm.extra.inventory.movements_last7 && _vm.extra.inventory.movements_last7["in"] || 0) + " | Out: " + _vm._s(_vm.extra.inventory && _vm.extra.inventory.movements_last7 && _vm.extra.inventory.movements_last7.out || 0))])])])], 1), _vm._v(" "), _c("b-col", {
     attrs: {
       md: "6"
     }
@@ -309,11 +356,11 @@ var render = function render() {
     }])
   }, [_vm._v(" "), _c("b-card-body", [_c("ul", {
     staticClass: "list-unstyled mb-0"
-  }, _vm._l(_vm.extra.sales.recent, function (s) {
+  }, _vm._l(_vm.extra.sales && _vm.extra.sales.recent || [], function (s) {
     return _c("li", {
       key: s.id,
       staticClass: "d-flex justify-content-between"
-    }, [_c("span", [_vm._v(_vm._s(_vm.firstItemName(s)))]), _vm._v(" "), _c("span", [_vm._v(_vm._s(Number(s.total).toFixed(2)) + " • " + _vm._s(_vm.formatDate(s.paid_at)))])]);
+    }, [_c("span", [_vm._v(_vm._s(_vm.firstItemName(s)))]), _vm._v(" "), _c("span", [_vm._v("₱" + _vm._s(Number(s.total || 0).toFixed(2)) + " • " + _vm._s(_vm.formatDate(s.created_at)))])]);
   }), 0)])], 1), _vm._v(" "), _c("b-card", {
     staticClass: "mt-3",
     attrs: {
@@ -328,11 +375,11 @@ var render = function render() {
     }])
   }, [_vm._v(" "), _c("b-card-body", [_c("ul", {
     staticClass: "list-unstyled mb-0"
-  }, _vm._l(_vm.extra.sales.top_products, function (p) {
+  }, _vm._l(_vm.extra.sales && _vm.extra.sales.top_products || [], function (p) {
     return _c("li", {
       key: p.name,
       staticClass: "d-flex justify-content-between"
-    }, [_c("span", [_vm._v(_vm._s(p.name))]), _vm._v(" "), _c("span", [_vm._v(_vm._s(p.qty) + " pcs • " + _vm._s(Number(p.total).toFixed(2)))])]);
+    }, [_c("span", [_vm._v(_vm._s(p.name))]), _vm._v(" "), _c("span", [_vm._v(_vm._s(p.qty || 0) + " pcs • ₱" + _vm._s(Number(p.total || 0).toFixed(2)))])]);
   }), 0)])], 1)], 1)], 1)], 1);
 };
 var staticRenderFns = [];

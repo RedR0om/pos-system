@@ -34,7 +34,7 @@
               <li class="nav-item" v-if="user && isAdmin"><router-link class="nav-link" to="/inventory"><i class="nav-icon fas fa-warehouse"></i><p>Inventory</p></router-link></li>
               <li class="nav-item" v-if="user && isAdmin"><router-link class="nav-link" to="/reports"><i class="nav-icon fas fa-chart-line"></i><p>Reports</p></router-link></li>
               <li class="nav-item" v-if="user"><router-link class="nav-link" to="/account"><i class="nav-icon fas fa-user"></i><p>Account</p></router-link></li>
-              <li class="nav-item" v-if="user && isAdmin"><router-link class="nav-link" to="/admin"><i class="nav-icon fas fa-tools"></i><p>Admin</p></router-link></li>
+
               <li class="nav-item" v-if="!user"><router-link class="nav-link" to="/login"><i class="nav-icon fas fa-sign-in-alt"></i><p>Login</p></router-link></li>
             </ul>
           </nav>
@@ -70,11 +70,17 @@
     methods: {
       logout() {
         // best-effort API logout; even if it fails, clear local state
-        try { this.$axios?.post?.('/api/logout'); } catch (_) {}
+        try { 
+          if (this.$axios && this.$axios.post) {
+            this.$axios.post('/api/logout'); 
+          }
+        } catch (_) {}
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         if (this.$auth) { this.$auth.user = null; this.$auth.token = null; }
-        delete this.$axios?.defaults?.headers?.common?.Authorization;
+        if (this.$axios && this.$axios.defaults && this.$axios.defaults.headers && this.$axios.defaults.headers.common) {
+          delete this.$axios.defaults.headers.common.Authorization;
+        }
         this.$router.replace('/login');
       }
     }

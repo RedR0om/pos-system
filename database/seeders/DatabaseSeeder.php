@@ -17,20 +17,22 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        User::updateOrCreate([
+        // Create admin user
+        \App\Models\User::create([
+            'name' => 'Admin User',
             'email' => 'admin@example.com',
-        ], [
-            'name' => 'Admin',
             'password' => Hash::make('password'),
             'role' => 'admin',
+            'status' => 'active',
         ]);
 
-        User::updateOrCreate([
+        // Create cashier user
+        \App\Models\User::create([
+            'name' => 'Cashier User',
             'email' => 'cashier@example.com',
-        ], [
-            'name' => 'Cashier',
             'password' => Hash::make('password'),
             'role' => 'cashier',
+            'status' => 'active',
         ]);
 
         $category = Category::firstOrCreate(['name' => 'General']);

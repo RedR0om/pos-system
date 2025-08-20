@@ -32,8 +32,15 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
   data: function data() {
     return {
       products: {
-        data: []
+        data: [],
+        total: 0,
+        per_page: 15,
+        current_page: 1,
+        last_page: 1,
+        from: 0,
+        to: 0
       },
+      currentPage: 1,
       form: {
         id: null,
         sku: '',
@@ -68,7 +75,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
     };
   },
   created: function created() {
-    this.load();
+    this.load(1);
     this.loadCategories();
   },
   methods: {
@@ -107,6 +114,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
     load: function load() {
       var _this2 = this;
       var page = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+      this.currentPage = page;
       axios__WEBPACK_IMPORTED_MODULE_0___default().get('/api/products?page=' + page).then(function (res) {
         _this2.products = res.data;
       })["catch"](function (e) {
@@ -167,7 +175,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
           showConfirmButton: false
         });
         _this3.$bvModal.hide('product-modal');
-        return _this3.load();
+        return _this3.load(_this3.currentPage);
       })["catch"](function (e) {
         var msg = 'Save failed';
         if (e.response) {
@@ -208,7 +216,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
             timer: 1000,
             showConfirmButton: false
           });
-          _this4.load();
+          _this4.load(_this4.currentPage);
         })["catch"](function (e) {
           var msg = e.response && (e.response.data.message || JSON.stringify(e.response.data)) || e.message;
           sweetalert2__WEBPACK_IMPORTED_MODULE_1___default().fire({
@@ -459,7 +467,33 @@ var render = function render() {
         }, [_vm._v("Delete")])];
       }
     }])
-  })], 1)], 1);
+  }), _vm._v(" "), _c("div", {
+    staticClass: "d-flex justify-content-between align-items-center mt-3"
+  }, [_c("div", {
+    staticClass: "text-muted"
+  }, [_vm._v("\n        Showing " + _vm._s(_vm.products.from || 0) + " to " + _vm._s(_vm.products.to || 0) + " of " + _vm._s(_vm.products.total || 0) + " products\n      ")]), _vm._v(" "), _c("b-pagination", {
+    attrs: {
+      "total-rows": _vm.products.total || 0,
+      "per-page": _vm.products.per_page || 15,
+      page: _vm.currentPage,
+      align: "center",
+      size: "sm",
+      "first-text": "«",
+      "last-text": "»",
+      "prev-text": "‹",
+      "next-text": "›"
+    },
+    on: {
+      change: _vm.load
+    },
+    model: {
+      value: _vm.currentPage,
+      callback: function callback($$v) {
+        _vm.currentPage = $$v;
+      },
+      expression: "currentPage"
+    }
+  })], 1)], 1)], 1);
 };
 var staticRenderFns = [];
 render._withStripped = true;
