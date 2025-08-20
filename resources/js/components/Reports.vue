@@ -11,7 +11,9 @@
 
     <!-- Date Filters -->
     <b-card class="mb-3">
-      <h6 class="card-title">Filter Reports</h6>
+      <b-row>
+        <b-col><h6 class="card-title">Filter Reports</h6></b-col>
+      </b-row>
       <b-form @submit.prevent="handleFilterSubmit">
         <b-row class="g-3">
           <b-col sm="3">
@@ -32,23 +34,18 @@
               />
             </b-form-group>
           </b-col>
-          <b-col sm="3">
-            <b-form-group label="Report Type">
-              <b-form-select 
-                v-model="filters.report_type" 
-                :options="reportTypeOptions"
-                placeholder="Select Report Type"
-              />
-            </b-form-group>
-          </b-col>
-          <b-col sm="3" class="d-flex align-items-end">
+          <b-col sm="6" class="d-flex align-items-end" style="margin-bottom: 16px;">
             <div class="d-flex gap-2">
-              <b-button type="submit" variant="primary" :disabled="isLoading">
+              <b-col sm="8">
+                <b-button type="submit" variant="primary" :disabled="isLoading">
                 <i class="fas fa-search"></i> {{ isLoading ? 'Loading...' : 'Generate Report' }}
               </b-button>
-              <b-button variant="outline-secondary" @click="clearFilters" :disabled="isLoading">
-                <i class="fas fa-times"></i> Clear
-              </b-button>
+              </b-col>
+              <b-col sm="6">
+                <b-button variant="outline-secondary" @click="clearFilters" :disabled="isLoading">
+                  <i class="fas fa-times"></i> Clear
+                </b-button>
+              </b-col>
             </div>
           </b-col>
         </b-row>
@@ -260,6 +257,9 @@
           :fields="saleItemFields"
           responsive="sm"
         >
+          <template #cell(product)="{ item }">
+            {{ item.product ? item.product.name : 'Unknown Product' }}
+          </template>
           <template #cell(unit_price)="{ item }">
             ₱{{ (item.unit_price || 0).toFixed(2) }}
           </template>
@@ -332,14 +332,8 @@ export default {
     return {
       filters: {
         from_date: '',
-        to_date: '',
-        report_type: 'sales'
+        to_date: ''
       },
-      reportTypeOptions: [
-        { value: 'sales', text: 'Sales Report' },
-        { value: 'products', text: 'Product Performance' },
-        { value: 'inventory', text: 'Inventory Report' }
-      ],
       summary: {},
       topProducts: [],
       recentSales: [],
@@ -353,19 +347,19 @@ export default {
       ],
       recentSalesFields: [
         { key: 'id', label: 'Sale #', class: 'text-center' },
-        { key: 'total_amount', label: 'Amount', class: 'text-end' },
+        { key: 'total', label: 'Amount', class: 'text-end' },
         { key: 'created_at', label: 'Date' },
         { key: 'actions', label: 'Actions', class: 'text-center' }
       ],
       salesFields: [
         { key: 'id', label: 'Sale #', class: 'text-center' },
-        { key: 'total_amount', label: 'Amount', class: 'text-end' },
+        { key: 'total', label: 'Amount', class: 'text-end' },
         { key: 'payment_method', label: 'Payment' },
         { key: 'created_at', label: 'Date' },
         { key: 'actions', label: 'Actions', class: 'text-center' }
       ],
       saleItemFields: [
-        { key: 'product_name', label: 'Product' },
+        { key: 'product', label: 'Product' },
         { key: 'quantity', label: 'Qty', class: 'text-center' },
         { key: 'unit_price', label: 'Price', class: 'text-end' },
         { key: 'total', label: 'Total', class: 'text-end' }
@@ -454,6 +448,10 @@ export default {
       // Force refresh charts when filters change
       this.refreshCharts();
       await this.loadReports();
+      // Update charts with new data after a short delay
+      setTimeout(() => {
+        this.updateCharts();
+      }, 100);
     },
 
     async loadSummary() {
@@ -587,7 +585,11 @@ export default {
         }
 
         console.log('Loading sales by day chart data...');
-        const res = await axios.get('/api/reports/sales-by-day');
+        const params = {
+          from_date: this.filters.from_date,
+          to_date: this.filters.to_date
+        };
+        const res = await axios.get('/api/reports/sales-by-day', { params });
         const byDay = res.data;
         console.log('Sales by day data:', byDay);
 
@@ -626,7 +628,11 @@ export default {
         }
 
         console.log('Loading sales by category chart data...');
-        const res = await axios.get('/api/reports/sales-by-category');
+        const params = {
+          from_date: this.filters.from_date,
+          to_date: this.filters.to_date
+        };
+        const res = await axios.get('/api/reports/sales-by-category', { params });
         const byCat = res.data;
         console.log('Sales by category data:', byCat);
 
@@ -657,12 +663,12 @@ export default {
     async viewSaleDetails(saleId) {
       try {
         const res = await axios.get(`/api/sales/${saleId}`);
-        const saleData = res.data.data;
+        const saleData = res.data;
         // Ensure sale data is properly formatted with numeric values
         this.selectedSale = {
           ...saleData,
           total: parseFloat(saleData.total) || 0,
-          sale_items: (saleData.sale_items || []).map(item => ({
+          sale_items: (saleData.items || []).map(item => ({
             ...item,
             unit_price: parseFloat(item.unit_price) || 0,
             total: parseFloat(item.total) || 0,
@@ -683,12 +689,12 @@ export default {
     async printReceipt(sale) {
       try {
         const res = await axios.get(`/api/sales/${sale.id}`);
-        const saleDetails = res.data.data;
+        const saleDetails = res.data;
         // Ensure sale data is properly formatted with numeric values
         const formattedSale = {
           ...saleDetails,
           total: parseFloat(saleDetails.total) || 0,
-          sale_items: (saleDetails.sale_items || []).map(item => ({
+          sale_items: (saleDetails.items || []).map(item => ({
             ...item,
             unit_price: parseFloat(item.unit_price) || 0,
             total: parseFloat(item.total) || 0,
@@ -719,7 +725,7 @@ export default {
     generateReceiptHtml(sale) {
       const items = sale.sale_items || [];
       const lines = items.map(item => 
-        `<tr><td>${item.product_name}</td><td style="text-align:right;">${item.quantity}</td><td style="text-align:right;">₱${(item.unit_price || 0).toFixed(2)}</td><td style="text-align:right;">₱${(item.total || 0).toFixed(2)}</td></tr>`
+        `<tr><td>${item.product ? item.product.name : 'Unknown Product'}</td><td style="text-align:right;">${item.quantity}</td><td style="text-align:right;">₱${(item.unit_price || 0).toFixed(2)}</td><td style="text-align:right;">₱${(item.total || 0).toFixed(2)}</td></tr>`
       ).join('');
       
       const total = (sale.total || 0).toFixed(2);
@@ -753,8 +759,7 @@ export default {
       try {
         const params = {
           from_date: this.filters.from_date,
-          to_date: this.filters.to_date,
-          report_type: this.filters.report_type
+          to_date: this.filters.to_date
         };
         
         const res = await axios.get('/api/reports/export', { 
@@ -790,11 +795,15 @@ export default {
     clearFilters() {
       this.filters = {
         from_date: '',
-        to_date: '',
-        report_type: 'sales'
+        to_date: ''
       };
       this.setDefaultDates();
+      this.refreshCharts();
       this.loadReports();
+      // Update charts with new data after a short delay
+      setTimeout(() => {
+        this.updateCharts();
+      }, 100);
     },
 
     refreshCharts() {
@@ -824,12 +833,12 @@ export default {
       try {
         const saleId = this.selectedSaleForPrint.id;
         const res = await axios.get(`/api/sales/${saleId}`);
-        const saleDetails = res.data.data;
+        const saleDetails = res.data;
         // Ensure sale data is properly formatted with numeric values
         const formattedSale = {
           ...saleDetails,
           total: parseFloat(saleDetails.total) || 0,
-          sale_items: (saleDetails.sale_items || []).map(item => ({
+          sale_items: (saleDetails.items || []).map(item => ({
             ...item,
             unit_price: parseFloat(item.unit_price) || 0,
             total: parseFloat(item.total) || 0,
@@ -870,7 +879,7 @@ export default {
     generateDetailedReceiptHtml(sale) {
       const items = sale.sale_items || [];
       const lines = items.map(item => 
-        `<tr><td>${item.product_name}</td><td style="text-align:right;">${item.quantity}</td><td style="text-align:right;">₱${(item.unit_price || 0).toFixed(2)}</td><td style="text-align:right;">₱${(item.total || 0).toFixed(2)}</td></tr>`
+        `<tr><td>${item.product ? item.product.name : 'Unknown Product'}</td><td style="text-align:right;">${item.quantity}</td><td style="text-align:right;">₱${(item.unit_price || 0).toFixed(2)}</td><td style="text-align:right;">₱${(item.total || 0).toFixed(2)}</td></tr>`
       ).join('');
       
       const total = (sale.total || 0).toFixed(2);
@@ -895,7 +904,7 @@ export default {
     generateInvoiceHtml(sale) {
       const items = sale.sale_items || [];
       const lines = items.map(item => 
-        `<tr><td>${item.product_name}</td><td style="text-align:right;">${item.quantity}</td><td style="text-align:right;">₱${(item.unit_price || 0).toFixed(2)}</td><td style="text-align:right;">₱${(item.total || 0).toFixed(2)}</td></tr>`
+        `<tr><td>${item.product ? item.product.name : 'Unknown Product'}</td><td style="text-align:right;">${item.quantity}</td><td style="text-align:right;">₱${(item.unit_price || 0).toFixed(2)}</td><td style="text-align:right;">₱${(item.total || 0).toFixed(2)}</td></tr>`
       ).join('');
       
       const total = (sale.total || 0).toFixed(2);

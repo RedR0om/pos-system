@@ -2,7 +2,12 @@
   <b-container fluid>
     <b-row class="mb-3 align-items-center">
       <b-col><h2 class="mb-0">Products</h2></b-col>
-      <b-col cols="auto"><b-button variant="primary" @click="openNew">New Product</b-button></b-col>
+      <b-col cols="auto">
+        <b-button variant="success" @click="openExportModal" class="me-2">
+          <i class="fas fa-file-csv"></i> Export to CSV
+        </b-button>
+        <b-button variant="primary" @click="openNew">New Product</b-button>
+      </b-col>
     </b-row>
 
     <b-modal id="product-modal" :title="form.id ? 'Edit Product' : 'New Product'" hide-footer @hidden="resetForm">
@@ -34,6 +39,50 @@
         <div class="d-flex justify-content-end">
           <b-button variant="secondary" class="mr-2" @click="$bvModal.hide('product-modal')">Cancel</b-button>
           <b-button type="submit" variant="success">{{ form.id ? 'Update' : 'Save' }}</b-button>
+        </div>
+      </b-form>
+    </b-modal>
+
+    <!-- Export CSV Modal -->
+    <b-modal id="export-csv-modal" title="Export Products to CSV" hide-footer size="md">
+      <b-form @submit.prevent="exportProductsCsv">
+        <b-row class="g-3">
+          <b-col md="6">
+            <b-form-group label="From Date">
+              <b-form-input 
+                v-model="exportFilters.from_date" 
+                type="date" 
+                placeholder="Start date"
+              />
+            </b-form-group>
+          </b-col>
+          <b-col md="6">
+            <b-form-group label="To Date">
+              <b-form-input 
+                v-model="exportFilters.to_date" 
+                type="date" 
+                placeholder="End date"
+              />
+            </b-form-group>
+          </b-col>
+          <b-col md="12">
+            <b-form-group label="Category">
+              <b-form-select 
+                v-model="exportFilters.category_id" 
+                :options="exportCategoryOptions"
+                placeholder="All Categories"
+              />
+            </b-form-group>
+          </b-col>
+        </b-row>
+        
+        <div class="d-flex justify-content-end gap-2 mt-3">
+          <b-button variant="secondary" @click="$bvModal.hide('export-csv-modal')">
+            Cancel
+          </b-button>
+          <b-button type="submit" variant="success">
+            <i class="fas fa-file-csv"></i> Export to CSV
+          </b-button>
         </div>
       </b-form>
     </b-modal>
@@ -89,6 +138,14 @@ export default {
         { key: 'actions', label: '', class: 'text-end' },
       ],
       categoryOptions: [],
+      exportFilters: {
+        from_date: '',
+        to_date: '',
+        category_id: 'all'
+      },
+      exportCategoryOptions: [
+        { value: 'all', text: 'All Categories' }
+      ],
     }
   },
   created() {
@@ -100,6 +157,11 @@ export default {
       try {
         const res = await axios.get('/api/categories');
         this.categoryOptions = [{ value: null, text: 'Uncategorized' }, ...res.data.map(c => ({ value: c.id, text: c.name }))];
+        this.exportCategoryOptions = [
+          { value: 'all', text: 'All Categories' },
+          { value: null, text: 'Uncategorized' },
+          ...res.data.map(c => ({ value: c.id, text: c.name }))
+        ];
       } catch (_) {}
     },
     load(page = 1) {
@@ -187,6 +249,49 @@ export default {
             Swal.fire({ icon: 'error', title: 'Delete failed', text: msg });
           });
       });
+    },
+    openExportModal() {
+      this.$bvModal.show('export-csv-modal');
+    },
+    async exportProductsCsv() {
+      try {
+        const params = {};
+        if (this.exportFilters.from_date) params.from_date = this.exportFilters.from_date;
+        if (this.exportFilters.to_date) params.to_date = this.exportFilters.to_date;
+        if (this.exportFilters.category_id && this.exportFilters.category_id !== 'all') {
+          params.category_id = this.exportFilters.category_id;
+        }
+
+        const res = await axios.get(`/api/reports/products-export`, { 
+          params,
+          responseType: 'blob'
+        });
+        
+        const url = window.URL.createObjectURL(new Blob([res.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `products-report-${this.exportFilters.from_date || 'all'}-to-${this.exportFilters.to_date || 'all'}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        
+        Swal.fire({
+          icon: 'success',
+          title: 'Export Successful',
+          text: 'CSV report has been downloaded',
+          timer: 1500,
+          showConfirmButton: false
+        });
+
+        this.$bvModal.hide('export-csv-modal');
+      } catch (e) {
+        console.error('Failed to export products report:', e);
+        Swal.fire({ 
+          icon: 'error', 
+          title: 'Export Failed', 
+          text: 'Failed to export products report to CSV' 
+        });
+      }
     }
   }
 }

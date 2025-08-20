@@ -1,5 +1,8 @@
 <template>
   <div class="hold-transition login-page">
+    <b-row class="text-center" style="padding-bottom: 5rem;">
+      <h4>Digitizing School Canteen Transactions: A POS-Based Solution for Efficient Payment Management</h4>
+    </b-row>
     <div class="login-box">
       <div class="login-logo">
         <b>POS</b> Login

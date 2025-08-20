@@ -15,12 +15,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! sweetalert2 */ "./node_modules/sweetalert2/dist/sweetalert2.all.js");
 /* harmony import */ var sweetalert2__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(sweetalert2__WEBPACK_IMPORTED_MODULE_1__);
-function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
-function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
-function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
-function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
-function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 function _regenerator() { /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/babel/babel/blob/main/packages/babel-helpers/LICENSE */ var e, t, r = "function" == typeof Symbol ? Symbol : {}, n = r.iterator || "@@iterator", o = r.toStringTag || "@@toStringTag"; function i(r, n, o, i) { var c = n && n.prototype instanceof Generator ? n : Generator, u = Object.create(c.prototype); return _regeneratorDefine2(u, "_invoke", function (r, n, o) { var i, c, u, f = 0, p = o || [], y = !1, G = { p: 0, n: 0, v: e, a: d, f: d.bind(e, 4), d: function d(t, r) { return i = t, c = 0, u = e, G.n = r, a; } }; function d(r, n) { for (c = r, u = n, t = 0; !y && f && !o && t < p.length; t++) { var o, i = p[t], d = G.p, l = i[2]; r > 3 ? (o = l === n) && (u = i[(c = i[4]) ? 5 : (c = 3, 3)], i[4] = i[5] = e) : i[0] <= d && ((o = r < 2 && d < i[1]) ? (c = 0, G.v = n, G.n = i[1]) : d < l && (o = r < 3 || i[0] > n || n > l) && (i[4] = r, i[5] = n, G.n = l, c = 0)); } if (o || r > 1) return a; throw y = !0, n; } return function (o, p, l) { if (f > 1) throw TypeError("Generator is already running"); for (y && 1 === p && d(p, l), c = p, u = l; (t = c < 2 ? e : u) || !y;) { i || (c ? c < 3 ? (c > 1 && (G.n = -1), d(c, u)) : G.n = u : G.v = u); try { if (f = 2, i) { if (c || (o = "next"), t = i[o]) { if (!(t = t.call(i, u))) throw TypeError("iterator result is not an object"); if (!t.done) return t; u = t.value, c < 2 && (c = 0); } else 1 === c && (t = i["return"]) && t.call(i), c < 2 && (u = TypeError("The iterator does not provide a '" + o + "' method"), c = 1); i = e; } else if ((t = (y = G.n < 0) ? u : r.call(n, G)) !== a) break; } catch (t) { i = e, c = 1, u = t; } finally { f = 1; } } return { value: t, done: y }; }; }(r, o, i), !0), u; } var a = {}; function Generator() {} function GeneratorFunction() {} function GeneratorFunctionPrototype() {} t = Object.getPrototypeOf; var c = [][n] ? t(t([][n]())) : (_regeneratorDefine2(t = {}, n, function () { return this; }), t), u = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(c); function f(e) { return Object.setPrototypeOf ? Object.setPrototypeOf(e, GeneratorFunctionPrototype) : (e.__proto__ = GeneratorFunctionPrototype, _regeneratorDefine2(e, o, "GeneratorFunction")), e.prototype = Object.create(u), e; } return GeneratorFunction.prototype = GeneratorFunctionPrototype, _regeneratorDefine2(u, "constructor", GeneratorFunctionPrototype), _regeneratorDefine2(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = "GeneratorFunction", _regeneratorDefine2(GeneratorFunctionPrototype, o, "GeneratorFunction"), _regeneratorDefine2(u), _regeneratorDefine2(u, o, "Generator"), _regeneratorDefine2(u, n, function () { return this; }), _regeneratorDefine2(u, "toString", function () { return "[object Generator]"; }), (_regenerator = function _regenerator() { return { w: i, m: f }; })(); }
 function _regeneratorDefine2(e, r, n, t) { var i = Object.defineProperty; try { i({}, "", {}); } catch (e) { i = 0; } _regeneratorDefine2 = function _regeneratorDefine(e, r, n, t) { function o(r, n) { _regeneratorDefine2(e, r, function (e) { return this._invoke(r, n, e); }); } r ? i ? i(e, r, { value: n, enumerable: !t, configurable: !t, writable: !t }) : e[r] = n : (o("next", 0), o("throw", 1), o("return", 2)); }, _regeneratorDefine2(e, r, n, t); }
 function asyncGeneratorStep(n, t, e, r, o, a, c) { try { var i = n[a](c), u = i.value; } catch (n) { return void e(n); } i.done ? t(u) : Promise.resolve(u).then(r, o); }
@@ -34,7 +28,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       movements: {
         data: [],
         total: 0,
-        per_page: 15,
+        per_page: 25,
         current_page: 1,
         last_page: 1,
         from: 0,
@@ -116,29 +110,28 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         value: 'out',
         text: 'Stock Out'
       }],
-      printFilters: {
+      exportFilters: {
         from_date: '',
         to_date: '',
-        type: 'all',
-        report_type: 'html',
-        // 'html' or 'pdf'
-        includes: ['summary', 'movements', 'products']
-      },
-      reportTypeOptions: [{
-        value: 'html',
-        text: 'HTML Report'
-      }, {
-        value: 'pdf',
-        text: 'PDF Report'
-      }]
+        type: 'all'
+      }
     };
   },
   created: function created() {
+    this.setDefaultDates();
     this.load(1);
     this.loadProducts();
     this.loadSummary();
   },
   methods: {
+    setDefaultDates: function setDefaultDates() {
+      var today = new Date();
+      var thirtyDaysAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
+      this.filters.from_date = thirtyDaysAgo.toISOString().split('T')[0];
+      this.filters.to_date = today.toISOString().split('T')[0];
+      this.exportFilters.from_date = thirtyDaysAgo.toISOString().split('T')[0];
+      this.exportFilters.to_date = today.toISOString().split('T')[0];
+    },
     loadProducts: function loadProducts() {
       var _this = this;
       return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
@@ -181,6 +174,8 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
               return axios__WEBPACK_IMPORTED_MODULE_0___default().get('/api/reports/dashboard-summary');
             case 1:
               res = _context2.v;
+              console.log('Dashboard summary response:', res.data);
+              console.log('Inventory data:', res.data.inventory);
               _this2.summary = res.data.inventory || {};
               _context2.n = 3;
               break;
@@ -205,9 +200,12 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
               page = _arguments.length > 0 && _arguments[0] !== undefined ? _arguments[0] : 1;
               _this3.currentPage = page;
               _context3.p = 1;
-              params = _objectSpread({
+              params = {
                 page: page
-              }, _this3.filters);
+              };
+              if (_this3.filters.from_date) params.from_date = _this3.filters.from_date;
+              if (_this3.filters.to_date) params.to_date = _this3.filters.to_date;
+              if (_this3.filters.type && _this3.filters.type !== 'all') params.type = _this3.filters.type;
               _context3.n = 2;
               return axios__WEBPACK_IMPORTED_MODULE_0___default().get("/api/inventory", {
                 params: params
@@ -328,77 +326,64 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         type: 'all'
       };
       this.currentPage = 1; // Reset to first page when filters are cleared
+      this.setDefaultDates(); // Reset to default dates
       this.load(1);
       this.loadSummary();
       this.loadProducts(); // Refresh product options with new stock levels
     },
-    openPrintModal: function openPrintModal() {
-      this.$bvModal.show('print-report-modal');
+    openExportModal: function openExportModal() {
+      this.$bvModal.show('export-excel-modal');
     },
-    printInventoryReport: function printInventoryReport() {
+    exportInventoryCsv: function exportInventoryCsv() {
       var _this6 = this;
       return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee6() {
-        var params, res, reportContent, _t5;
+        var params, res, url, link, _t5;
         return _regenerator().w(function (_context6) {
           while (1) switch (_context6.p = _context6.n) {
             case 0:
               _context6.p = 0;
-              params = {
-                from_date: _this6.printFilters.from_date,
-                to_date: _this6.printFilters.to_date,
-                type: _this6.printFilters.type,
-                report_type: _this6.printFilters.report_type,
-                includes: _this6.printFilters.includes.join(',')
-              };
+              params = {};
+              if (_this6.exportFilters.from_date) params.from_date = _this6.exportFilters.from_date;
+              if (_this6.exportFilters.to_date) params.to_date = _this6.exportFilters.to_date;
+              if (_this6.exportFilters.type && _this6.exportFilters.type !== 'all') params.type = _this6.exportFilters.type;
               _context6.n = 1;
-              return axios__WEBPACK_IMPORTED_MODULE_0___default().get("/api/reports/inventory-report", {
-                params: params
+              return axios__WEBPACK_IMPORTED_MODULE_0___default().get("/api/reports/inventory-export", {
+                params: params,
+                responseType: 'blob'
               });
             case 1:
               res = _context6.v;
-              reportContent = res.data;
-              if (_this6.printFilters.report_type === 'html') {
-                _this6.printHtmlReport(reportContent);
-              } else if (_this6.printFilters.report_type === 'pdf') {
-                _this6.printPdfReport(reportContent);
-              }
-              _this6.$bvModal.hide('print-report-modal');
+              url = window.URL.createObjectURL(new Blob([res.data]));
+              link = document.createElement('a');
+              link.href = url;
+              link.setAttribute('download', "inventory-report-".concat(_this6.exportFilters.from_date || 'all', "-to-").concat(_this6.exportFilters.to_date || 'all', ".csv"));
+              document.body.appendChild(link);
+              link.click();
+              link.remove();
+              sweetalert2__WEBPACK_IMPORTED_MODULE_1___default().fire({
+                icon: 'success',
+                title: 'Export Successful',
+                text: 'CSV report has been downloaded',
+                timer: 1500,
+                showConfirmButton: false
+              });
+              _this6.$bvModal.hide('export-excel-modal');
               _context6.n = 3;
               break;
             case 2:
               _context6.p = 2;
               _t5 = _context6.v;
-              console.error('Failed to generate report:', _t5);
+              console.error('Failed to export inventory report:', _t5);
               sweetalert2__WEBPACK_IMPORTED_MODULE_1___default().fire({
                 icon: 'error',
-                title: 'Print Failed',
-                text: 'Failed to generate or print inventory report'
+                title: 'Export Failed',
+                text: 'Failed to export inventory report to CSV'
               });
             case 3:
               return _context6.a(2);
           }
         }, _callee6, null, [[0, 2]]);
       }))();
-    },
-    printHtmlReport: function printHtmlReport(reportContent) {
-      var printWindow = window.open('', '_blank');
-      printWindow.document.write("\n        <!DOCTYPE html>\n        <html>\n        <head>\n          <title>Inventory Report</title>\n          <style>\n            body { font-family: Arial, sans-serif; margin: 20px; }\n            .header { text-align: center; margin-bottom: 30px; }\n            .summary { display: flex; justify-content: space-between; margin-bottom: 30px; }\n            .summary-item { text-align: center; }\n            .summary-value { font-size: 24px; font-weight: bold; }\n            .summary-label { font-size: 12px; color: #666; }\n            table { width: 100%; border-collapse: collapse; margin-top: 20px; }\n            th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }\n            th { background-color: #f2f2f2; }\n            .type-in { color: green; }\n            .type-out { color: red; }\n            .footer { margin-top: 30px; text-align: center; font-size: 12px; color: #666; }\n          </style>\n        </head>\n        <body>\n          ".concat(reportContent, "\n        </body>\n        </html>\n      "));
-      printWindow.document.close();
-      printWindow.focus();
-      printWindow.print();
-      printWindow.close();
-    },
-    printPdfReport: function printPdfReport(reportContent) {
-      // This method would typically involve a PDF generation library (e.g., jsPDF, pdfmake)
-      // For demonstration, we'll just log the content to the console.
-      console.log('PDF Report Content:', reportContent);
-      sweetalert2__WEBPACK_IMPORTED_MODULE_1___default().fire({
-        icon: 'info',
-        title: 'PDF Report',
-        html: "<pre>".concat(reportContent, "</pre>"),
-        showConfirmButton: true,
-        confirmButtonText: 'Close'
-      });
     },
     viewSaleDetails: function viewSaleDetails(saleId) {
       var _this7 = this;
@@ -475,15 +460,15 @@ var render = function render() {
       variant: "success"
     },
     on: {
-      click: _vm.openPrintModal
+      click: _vm.openExportModal
     }
   }, [_c("i", {
-    staticClass: "fas fa-print"
-  }), _vm._v(" Print Report\n      ")])], 1)], 1), _vm._v(" "), _c("b-card", {
+    staticClass: "fas fa-file-csv"
+  }), _vm._v(" Export to CSV\n       ")])], 1)], 1), _vm._v(" "), _c("b-card", {
     staticClass: "mb-3"
-  }, [_c("h6", {
+  }, [_c("b-row", [_c("h6", {
     staticClass: "card-title"
-  }, [_vm._v("Filter Movements")]), _vm._v(" "), _c("b-form", {
+  }, [_vm._v("Filter Movements")])]), _vm._v(" "), _c("br"), _vm._v(" "), _c("b-form", {
     on: {
       submit: function submit($event) {
         $event.preventDefault();
@@ -554,6 +539,9 @@ var render = function render() {
     }
   })], 1)], 1), _vm._v(" "), _c("b-col", {
     staticClass: "d-flex align-items-end",
+    staticStyle: {
+      "margin-bottom": "16px"
+    },
     attrs: {
       sm: "3"
     }
@@ -593,7 +581,7 @@ var render = function render() {
       "bg-variant": "success",
       "text-variant": "white"
     }
-  }, [_c("h4", [_vm._v(_vm._s(_vm.summary.total_stock || 0))]), _vm._v(" "), _c("small", [_vm._v("Total Stock")])])], 1), _vm._v(" "), _c("b-col", {
+  }, [_c("h4", [_vm._v(_vm._s(_vm.summary.stock_on_hand || 0))]), _vm._v(" "), _c("small", [_vm._v("Total Stock")])])], 1), _vm._v(" "), _c("b-col", {
     attrs: {
       md: "3"
     }
@@ -615,9 +603,9 @@ var render = function render() {
     }
   }, [_c("h4", [_vm._v(_vm._s(_vm.summary.stock_value || "₱0.00"))]), _vm._v(" "), _c("small", [_vm._v("Stock Value")])])], 1)], 1), _vm._v(" "), _c("b-card", {
     staticClass: "mb-3"
-  }, [_c("h5", {
+  }, [_c("b-row", [_c("h5", {
     staticClass: "card-title"
-  }, [_vm._v("Adjust Inventory")]), _vm._v(" "), _c("b-form", {
+  }, [_vm._v("Adjust Inventory")])]), _vm._v(" "), _c("br"), _vm._v(" "), _c("b-form", {
     on: {
       submit: function submit($event) {
         $event.preventDefault();
@@ -710,6 +698,9 @@ var render = function render() {
     }
   })], 1)], 1), _vm._v(" "), _c("b-col", {
     staticClass: "d-flex align-items-end",
+    staticStyle: {
+      "margin-bottom": "16px"
+    },
     attrs: {
       sm: "1"
     }
@@ -789,7 +780,7 @@ var render = function render() {
   }, [_vm._v("\n        Showing " + _vm._s(_vm.movements.from || 0) + " to " + _vm._s(_vm.movements.to || 0) + " of " + _vm._s(_vm.movements.total || 0) + " movements\n      ")]), _vm._v(" "), _c("b-pagination", {
     attrs: {
       "total-rows": _vm.movements.total || 0,
-      "per-page": _vm.movements.per_page || 15,
+      "per-page": _vm.movements.per_page || 25,
       page: _vm.currentPage,
       align: "center",
       size: "sm",
@@ -858,16 +849,16 @@ var render = function render() {
     staticClass: "fas fa-eye"
   }), _vm._v(" View Sale #" + _vm._s(_vm.selectedMovement.sale_id) + "\n            ")])], 1)])], 1) : _vm._e()], 1) : _vm._e()]), _vm._v(" "), _c("b-modal", {
     attrs: {
-      id: "print-report-modal",
-      title: "Print Inventory Report",
+      id: "export-excel-modal",
+      title: "Export Inventory Report to CSV",
       "hide-footer": "",
-      size: "lg"
+      size: "md"
     }
   }, [_c("b-form", {
     on: {
       submit: function submit($event) {
         $event.preventDefault();
-        return _vm.printInventoryReport.apply(null, arguments);
+        return _vm.exportInventoryCsv.apply(null, arguments);
       }
     }
   }, [_c("b-row", {
@@ -878,20 +869,19 @@ var render = function render() {
     }
   }, [_c("b-form-group", {
     attrs: {
-      label: "Report Date Range"
+      label: "From Date"
     }
   }, [_c("b-form-input", {
     attrs: {
       type: "date",
-      placeholder: "Start date",
-      required: ""
+      placeholder: "Start date"
     },
     model: {
-      value: _vm.printFilters.from_date,
+      value: _vm.exportFilters.from_date,
       callback: function callback($$v) {
-        _vm.$set(_vm.printFilters, "from_date", $$v);
+        _vm.$set(_vm.exportFilters, "from_date", $$v);
       },
-      expression: "printFilters.from_date"
+      expression: "exportFilters.from_date"
     }
   })], 1)], 1), _vm._v(" "), _c("b-col", {
     attrs: {
@@ -904,19 +894,18 @@ var render = function render() {
   }, [_c("b-form-input", {
     attrs: {
       type: "date",
-      placeholder: "End date",
-      required: ""
+      placeholder: "End date"
     },
     model: {
-      value: _vm.printFilters.to_date,
+      value: _vm.exportFilters.to_date,
       callback: function callback($$v) {
-        _vm.$set(_vm.printFilters, "to_date", $$v);
+        _vm.$set(_vm.exportFilters, "to_date", $$v);
       },
-      expression: "printFilters.to_date"
+      expression: "exportFilters.to_date"
     }
   })], 1)], 1), _vm._v(" "), _c("b-col", {
     attrs: {
-      md: "6"
+      md: "12"
     }
   }, [_c("b-form-group", {
     attrs: {
@@ -928,61 +917,13 @@ var render = function render() {
       placeholder: "All Types"
     },
     model: {
-      value: _vm.printFilters.type,
+      value: _vm.exportFilters.type,
       callback: function callback($$v) {
-        _vm.$set(_vm.printFilters, "type", $$v);
+        _vm.$set(_vm.exportFilters, "type", $$v);
       },
-      expression: "printFilters.type"
+      expression: "exportFilters.type"
     }
-  })], 1)], 1), _vm._v(" "), _c("b-col", {
-    attrs: {
-      md: "6"
-    }
-  }, [_c("b-form-group", {
-    attrs: {
-      label: "Report Type"
-    }
-  }, [_c("b-form-select", {
-    attrs: {
-      options: _vm.reportTypeOptions,
-      required: ""
-    },
-    model: {
-      value: _vm.printFilters.report_type,
-      callback: function callback($$v) {
-        _vm.$set(_vm.printFilters, "report_type", $$v);
-      },
-      expression: "printFilters.report_type"
-    }
-  })], 1)], 1), _vm._v(" "), _c("b-col", {
-    attrs: {
-      md: "12"
-    }
-  }, [_c("b-form-group", {
-    attrs: {
-      label: "Include in Report"
-    }
-  }, [_c("b-form-checkbox-group", {
-    model: {
-      value: _vm.printFilters.includes,
-      callback: function callback($$v) {
-        _vm.$set(_vm.printFilters, "includes", $$v);
-      },
-      expression: "printFilters.includes"
-    }
-  }, [_c("b-form-checkbox", {
-    attrs: {
-      value: "summary"
-    }
-  }, [_vm._v("Summary Cards")]), _vm._v(" "), _c("b-form-checkbox", {
-    attrs: {
-      value: "movements"
-    }
-  }, [_vm._v("Movement Details")]), _vm._v(" "), _c("b-form-checkbox", {
-    attrs: {
-      value: "products"
-    }
-  }, [_vm._v("Product List")])], 1)], 1)], 1)], 1), _vm._v(" "), _c("div", {
+  })], 1)], 1)], 1), _vm._v(" "), _c("div", {
     staticClass: "d-flex justify-content-end gap-2 mt-3"
   }, [_c("b-button", {
     attrs: {
@@ -990,7 +931,7 @@ var render = function render() {
     },
     on: {
       click: function click($event) {
-        return _vm.$bvModal.hide("print-report-modal");
+        return _vm.$bvModal.hide("export-excel-modal");
       }
     }
   }, [_vm._v("\n          Cancel\n        ")]), _vm._v(" "), _c("b-button", {
@@ -999,8 +940,8 @@ var render = function render() {
       variant: "success"
     }
   }, [_c("i", {
-    staticClass: "fas fa-print"
-  }), _vm._v(" Generate & Print Report\n        ")])], 1)], 1)], 1)], 1);
+    staticClass: "fas fa-file-csv"
+  }), _vm._v(" Export to CSV\n         ")])], 1)], 1)], 1)], 1);
 };
 var staticRenderFns = [];
 render._withStripped = true;

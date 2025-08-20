@@ -79,7 +79,12 @@ var render = function render() {
     _c = _vm._self._c;
   return _c("div", {
     staticClass: "hold-transition login-page"
-  }, [_c("div", {
+  }, [_c("b-row", {
+    staticClass: "text-center",
+    staticStyle: {
+      "padding-bottom": "5rem"
+    }
+  }, [_c("h4", [_vm._v("Digitizing School Canteen Transactions: A POS-Based Solution for Efficient Payment Management")])]), _vm._v(" "), _c("div", {
     staticClass: "login-box"
   }, [_vm._m(0), _vm._v(" "), _c("div", {
     staticClass: "card"
@@ -147,7 +152,7 @@ var render = function render() {
       block: "",
       disabled: _vm.loading
     }
-  }, [_vm._v("Sign In")])], 1)])])], 1)])])]);
+  }, [_vm._v("Sign In")])], 1)])])], 1)])])], 1);
 };
 var staticRenderFns = [function () {
   var _vm = this,

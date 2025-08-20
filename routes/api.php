@@ -63,3 +63,5 @@ Route::get('/reports/dashboard-summary', [ReportController::class, 'dashboardSum
 Route::get('/reports/top-products', [ReportController::class, 'topProducts']);
 Route::get('/reports/recent-sales', [ReportController::class, 'recentSales']);
 Route::get('/reports/export', [ReportController::class, 'export']);
+Route::get('/reports/inventory-export', [ReportController::class, 'inventoryExport']);
+Route::get('/reports/products-export', [ReportController::class, 'productsExport']);

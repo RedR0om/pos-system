@@ -10,9 +10,25 @@ use Illuminate\Support\Facades\DB;
 
 class InventoryController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return InventoryMovement::with('product')->orderByDesc('id')->paginate(20);
+        $query = InventoryMovement::with('product');
+        
+        // Apply date filters
+        if ($request->filled('from_date')) {
+            $query->whereDate('created_at', '>=', $request->from_date);
+        }
+        
+        if ($request->filled('to_date')) {
+            $query->whereDate('created_at', '<=', $request->to_date);
+        }
+        
+        // Apply movement type filter
+        if ($request->filled('type') && $request->type !== 'all') {
+            $query->where('type', $request->type);
+        }
+        
+        return $query->orderByDesc('created_at')->paginate(25);
     }
 
     public function adjust(Request $request)

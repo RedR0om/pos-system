@@ -35,19 +35,8 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
     return {
       filters: {
         from_date: '',
-        to_date: '',
-        report_type: 'sales'
+        to_date: ''
       },
-      reportTypeOptions: [{
-        value: 'sales',
-        text: 'Sales Report'
-      }, {
-        value: 'products',
-        text: 'Product Performance'
-      }, {
-        value: 'inventory',
-        text: 'Inventory Report'
-      }],
       summary: {},
       topProducts: [],
       recentSales: [],
@@ -79,7 +68,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         label: 'Sale #',
         "class": 'text-center'
       }, {
-        key: 'total_amount',
+        key: 'total',
         label: 'Amount',
         "class": 'text-end'
       }, {
@@ -95,7 +84,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         label: 'Sale #',
         "class": 'text-center'
       }, {
-        key: 'total_amount',
+        key: 'total',
         label: 'Amount',
         "class": 'text-end'
       }, {
@@ -110,7 +99,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         "class": 'text-center'
       }],
       saleItemFields: [{
-        key: 'product_name',
+        key: 'product',
         label: 'Product'
       }, {
         key: 'quantity',
@@ -236,6 +225,11 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
               _context2.n = 1;
               return _this2.loadReports();
             case 1:
+              // Update charts with new data after a short delay
+              setTimeout(function () {
+                _this2.updateCharts();
+              }, 100);
+            case 2:
               return _context2.a(2);
           }
         }, _callee2);
@@ -448,7 +442,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
     updateSalesByDayChart: function updateSalesByDayChart() {
       var _this7 = this;
       return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee7() {
-        var res, byDay, _t6;
+        var params, res, byDay, _t6;
         return _regenerator().w(function (_context7) {
           while (1) switch (_context7.p = _context7.n) {
             case 0:
@@ -461,8 +455,14 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
               return _context7.a(2);
             case 1:
               console.log('Loading sales by day chart data...');
+              params = {
+                from_date: _this7.filters.from_date,
+                to_date: _this7.filters.to_date
+              };
               _context7.n = 2;
-              return axios__WEBPACK_IMPORTED_MODULE_0___default().get('/api/reports/sales-by-day');
+              return axios__WEBPACK_IMPORTED_MODULE_0___default().get('/api/reports/sales-by-day', {
+                params: params
+              });
             case 2:
               res = _context7.v;
               byDay = res.data;
@@ -515,7 +515,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
     updateSalesByCategoryChart: function updateSalesByCategoryChart() {
       var _this8 = this;
       return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee8() {
-        var res, byCat, _t7;
+        var params, res, byCat, _t7;
         return _regenerator().w(function (_context8) {
           while (1) switch (_context8.p = _context8.n) {
             case 0:
@@ -528,8 +528,14 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
               return _context8.a(2);
             case 1:
               console.log('Loading sales by category chart data...');
+              params = {
+                from_date: _this8.filters.from_date,
+                to_date: _this8.filters.to_date
+              };
               _context8.n = 2;
-              return axios__WEBPACK_IMPORTED_MODULE_0___default().get('/api/reports/sales-by-category');
+              return axios__WEBPACK_IMPORTED_MODULE_0___default().get('/api/reports/sales-by-category', {
+                params: params
+              });
             case 2:
               res = _context8.v;
               byCat = res.data;
@@ -585,10 +591,10 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
               return axios__WEBPACK_IMPORTED_MODULE_0___default().get("/api/sales/".concat(saleId));
             case 1:
               res = _context9.v;
-              saleData = res.data.data; // Ensure sale data is properly formatted with numeric values
+              saleData = res.data; // Ensure sale data is properly formatted with numeric values
               _this9.selectedSale = _objectSpread(_objectSpread({}, saleData), {}, {
                 total: parseFloat(saleData.total) || 0,
-                sale_items: (saleData.sale_items || []).map(function (item) {
+                sale_items: (saleData.items || []).map(function (item) {
                   return _objectSpread(_objectSpread({}, item), {}, {
                     unit_price: parseFloat(item.unit_price) || 0,
                     total: parseFloat(item.total) || 0,
@@ -626,10 +632,10 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
               return axios__WEBPACK_IMPORTED_MODULE_0___default().get("/api/sales/".concat(sale.id));
             case 1:
               res = _context0.v;
-              saleDetails = res.data.data; // Ensure sale data is properly formatted with numeric values
+              saleDetails = res.data; // Ensure sale data is properly formatted with numeric values
               formattedSale = _objectSpread(_objectSpread({}, saleDetails), {}, {
                 total: parseFloat(saleDetails.total) || 0,
-                sale_items: (saleDetails.sale_items || []).map(function (item) {
+                sale_items: (saleDetails.items || []).map(function (item) {
                   return _objectSpread(_objectSpread({}, item), {}, {
                     unit_price: parseFloat(item.unit_price) || 0,
                     total: parseFloat(item.total) || 0,
@@ -666,7 +672,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
     generateReceiptHtml: function generateReceiptHtml(sale) {
       var items = sale.sale_items || [];
       var lines = items.map(function (item) {
-        return "<tr><td>".concat(item.product_name, "</td><td style=\"text-align:right;\">").concat(item.quantity, "</td><td style=\"text-align:right;\">\u20B1").concat((item.unit_price || 0).toFixed(2), "</td><td style=\"text-align:right;\">\u20B1").concat((item.total || 0).toFixed(2), "</td></tr>");
+        return "<tr><td>".concat(item.product ? item.product.name : 'Unknown Product', "</td><td style=\"text-align:right;\">").concat(item.quantity, "</td><td style=\"text-align:right;\">\u20B1").concat((item.unit_price || 0).toFixed(2), "</td><td style=\"text-align:right;\">\u20B1").concat((item.total || 0).toFixed(2), "</td></tr>");
       }).join('');
       var total = (sale.total || 0).toFixed(2);
       var date = this.formatDate(sale.created_at);
@@ -691,8 +697,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
               _context1.p = 0;
               params = {
                 from_date: _this1.filters.from_date,
-                to_date: _this1.filters.to_date,
-                report_type: _this1.filters.report_type
+                to_date: _this1.filters.to_date
               };
               _context1.n = 1;
               return axios__WEBPACK_IMPORTED_MODULE_0___default().get('/api/reports/export', {
@@ -733,13 +738,18 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       }))();
     },
     clearFilters: function clearFilters() {
+      var _this10 = this;
       this.filters = {
         from_date: '',
-        to_date: '',
-        report_type: 'sales'
+        to_date: ''
       };
       this.setDefaultDates();
+      this.refreshCharts();
       this.loadReports();
+      // Update charts with new data after a short delay
+      setTimeout(function () {
+        _this10.updateCharts();
+      }, 100);
     },
     refreshCharts: function refreshCharts() {
       // Simple approach like Dashboard - destroy and recreate
@@ -762,22 +772,22 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       this.$bvModal.show('print-modal');
     },
     printReceiptFromModal: function printReceiptFromModal() {
-      var _this10 = this;
+      var _this11 = this;
       return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee10() {
         var saleId, res, saleDetails, formattedSale, receiptHtml, _t1;
         return _regenerator().w(function (_context10) {
           while (1) switch (_context10.p = _context10.n) {
             case 0:
               _context10.p = 0;
-              saleId = _this10.selectedSaleForPrint.id;
+              saleId = _this11.selectedSaleForPrint.id;
               _context10.n = 1;
               return axios__WEBPACK_IMPORTED_MODULE_0___default().get("/api/sales/".concat(saleId));
             case 1:
               res = _context10.v;
-              saleDetails = res.data.data; // Ensure sale data is properly formatted with numeric values
+              saleDetails = res.data; // Ensure sale data is properly formatted with numeric values
               formattedSale = _objectSpread(_objectSpread({}, saleDetails), {}, {
                 total: parseFloat(saleDetails.total) || 0,
-                sale_items: (saleDetails.sale_items || []).map(function (item) {
+                sale_items: (saleDetails.items || []).map(function (item) {
                   return _objectSpread(_objectSpread({}, item), {}, {
                     unit_price: parseFloat(item.unit_price) || 0,
                     total: parseFloat(item.total) || 0,
@@ -786,14 +796,14 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
                 })
               });
               receiptHtml = '';
-              if (_this10.printOptions.type === 'receipt') {
-                receiptHtml = _this10.generateReceiptHtml(formattedSale);
-              } else if (_this10.printOptions.type === 'detailed') {
-                receiptHtml = _this10.generateDetailedReceiptHtml(formattedSale);
-              } else if (_this10.printOptions.type === 'invoice') {
-                receiptHtml = _this10.generateInvoiceHtml(formattedSale);
+              if (_this11.printOptions.type === 'receipt') {
+                receiptHtml = _this11.generateReceiptHtml(formattedSale);
+              } else if (_this11.printOptions.type === 'detailed') {
+                receiptHtml = _this11.generateDetailedReceiptHtml(formattedSale);
+              } else if (_this11.printOptions.type === 'invoice') {
+                receiptHtml = _this11.generateInvoiceHtml(formattedSale);
               }
-              _this10.openPrintWindow(receiptHtml);
+              _this11.openPrintWindow(receiptHtml);
               sweetalert2__WEBPACK_IMPORTED_MODULE_1___default().fire({
                 icon: 'success',
                 title: 'Receipt Generated',
@@ -814,7 +824,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
               });
             case 3:
               _context10.p = 3;
-              _this10.$bvModal.hide('print-modal');
+              _this11.$bvModal.hide('print-modal');
               return _context10.f(3);
             case 4:
               return _context10.a(2);
@@ -825,7 +835,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
     generateDetailedReceiptHtml: function generateDetailedReceiptHtml(sale) {
       var items = sale.sale_items || [];
       var lines = items.map(function (item) {
-        return "<tr><td>".concat(item.product_name, "</td><td style=\"text-align:right;\">").concat(item.quantity, "</td><td style=\"text-align:right;\">\u20B1").concat((item.unit_price || 0).toFixed(2), "</td><td style=\"text-align:right;\">\u20B1").concat((item.total || 0).toFixed(2), "</td></tr>");
+        return "<tr><td>".concat(item.product ? item.product.name : 'Unknown Product', "</td><td style=\"text-align:right;\">").concat(item.quantity, "</td><td style=\"text-align:right;\">\u20B1").concat((item.unit_price || 0).toFixed(2), "</td><td style=\"text-align:right;\">\u20B1").concat((item.total || 0).toFixed(2), "</td></tr>");
       }).join('');
       var total = (sale.total || 0).toFixed(2);
       var date = this.formatDate(sale.created_at);
@@ -835,7 +845,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
     generateInvoiceHtml: function generateInvoiceHtml(sale) {
       var items = sale.sale_items || [];
       var lines = items.map(function (item) {
-        return "<tr><td>".concat(item.product_name, "</td><td style=\"text-align:right;\">").concat(item.quantity, "</td><td style=\"text-align:right;\">\u20B1").concat((item.unit_price || 0).toFixed(2), "</td><td style=\"text-align:right;\">\u20B1").concat((item.total || 0).toFixed(2), "</td></tr>");
+        return "<tr><td>".concat(item.product ? item.product.name : 'Unknown Product', "</td><td style=\"text-align:right;\">").concat(item.quantity, "</td><td style=\"text-align:right;\">\u20B1").concat((item.unit_price || 0).toFixed(2), "</td><td style=\"text-align:right;\">\u20B1").concat((item.total || 0).toFixed(2), "</td></tr>");
       }).join('');
       var total = (sale.total || 0).toFixed(2);
       var date = this.formatDate(sale.created_at);
@@ -885,9 +895,9 @@ var render = function render() {
     staticClass: "fas fa-download"
   }), _vm._v(" Export Report\n      ")])], 1)], 1), _vm._v(" "), _c("b-card", {
     staticClass: "mb-3"
-  }, [_c("h6", {
+  }, [_c("b-row", [_c("b-col", [_c("h6", {
     staticClass: "card-title"
-  }, [_vm._v("Filter Reports")]), _vm._v(" "), _c("b-form", {
+  }, [_vm._v("Filter Reports")])])], 1), _vm._v(" "), _c("b-form", {
     on: {
       submit: function submit($event) {
         $event.preventDefault();
@@ -937,32 +947,19 @@ var render = function render() {
       expression: "filters.to_date"
     }
   })], 1)], 1), _vm._v(" "), _c("b-col", {
-    attrs: {
-      sm: "3"
-    }
-  }, [_c("b-form-group", {
-    attrs: {
-      label: "Report Type"
-    }
-  }, [_c("b-form-select", {
-    attrs: {
-      options: _vm.reportTypeOptions,
-      placeholder: "Select Report Type"
-    },
-    model: {
-      value: _vm.filters.report_type,
-      callback: function callback($$v) {
-        _vm.$set(_vm.filters, "report_type", $$v);
-      },
-      expression: "filters.report_type"
-    }
-  })], 1)], 1), _vm._v(" "), _c("b-col", {
     staticClass: "d-flex align-items-end",
+    staticStyle: {
+      "margin-bottom": "16px"
+    },
     attrs: {
-      sm: "3"
+      sm: "6"
     }
   }, [_c("div", {
     staticClass: "d-flex gap-2"
+  }, [_c("b-col", {
+    attrs: {
+      sm: "8"
+    }
   }, [_c("b-button", {
     attrs: {
       type: "submit",
@@ -971,7 +968,11 @@ var render = function render() {
     }
   }, [_c("i", {
     staticClass: "fas fa-search"
-  }), _vm._v(" " + _vm._s(_vm.isLoading ? "Loading..." : "Generate Report") + "\n            ")]), _vm._v(" "), _c("b-button", {
+  }), _vm._v(" " + _vm._s(_vm.isLoading ? "Loading..." : "Generate Report") + "\n            ")])], 1), _vm._v(" "), _c("b-col", {
+    attrs: {
+      sm: "6"
+    }
+  }, [_c("b-button", {
     attrs: {
       variant: "outline-secondary",
       disabled: _vm.isLoading
@@ -981,7 +982,7 @@ var render = function render() {
     }
   }, [_c("i", {
     staticClass: "fas fa-times"
-  }), _vm._v(" Clear\n            ")])], 1)])], 1)], 1)], 1), _vm._v(" "), _vm.isLoading ? _c("div", {
+  }), _vm._v(" Clear\n              ")])], 1)], 1)])], 1)], 1)], 1), _vm._v(" "), _vm.isLoading ? _c("div", {
     staticClass: "text-center py-5"
   }, [_c("div", {
     staticClass: "spinner-border text-primary",
@@ -1260,18 +1261,24 @@ var render = function render() {
       responsive: "sm"
     },
     scopedSlots: _vm._u([{
-      key: "cell(unit_price)",
+      key: "cell(product)",
       fn: function fn(_ref9) {
         var item = _ref9.item;
+        return [_vm._v("\n          " + _vm._s(item.product ? item.product.name : "Unknown Product") + "\n        ")];
+      }
+    }, {
+      key: "cell(unit_price)",
+      fn: function fn(_ref0) {
+        var item = _ref0.item;
         return [_vm._v("\n          ₱" + _vm._s((item.unit_price || 0).toFixed(2)) + "\n        ")];
       }
     }, {
       key: "cell(total)",
-      fn: function fn(_ref0) {
-        var item = _ref0.item;
+      fn: function fn(_ref1) {
+        var item = _ref1.item;
         return [_vm._v("\n          ₱" + _vm._s((item.total || 0).toFixed(2)) + "\n        ")];
       }
-    }], null, false, 4160244585)
+    }], null, false, 2184455084)
   }), _vm._v(" "), _c("div", {
     staticClass: "d-flex justify-content-end gap-2 mt-3"
   }, [_c("b-button", {

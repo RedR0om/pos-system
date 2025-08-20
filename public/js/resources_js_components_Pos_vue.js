@@ -288,7 +288,7 @@ var render = function render() {
       }
     }, [_c("i", {
       staticClass: "fas fa-plus"
-    }), _vm._v(" Add\n                  ")])], 1)], 1)], 1)])], 1);
+    })])], 1)], 1)], 1)])], 1);
   }), 1)], 1), _vm._v(" "), _c("b-col", {
     attrs: {
       lg: "4"

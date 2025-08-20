@@ -16,7 +16,7 @@
                   </b-col>
                   <b-col>
                     <b-button size="sm" variant="primary" class="add-btn" @click="addProduct(p)">
-                      <i class="fas fa-plus"></i> Add
+                      <i class="fas fa-plus"></i>
                     </b-button>
                   </b-col>
                 </b-row>

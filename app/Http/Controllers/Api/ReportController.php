@@ -34,23 +34,43 @@ class ReportController extends Controller
         ]);
     }
 
-    public function salesByDay()
+    public function salesByDay(Request $request)
     {
-        $from = now()->subDays(6)->startOfDay();
-        $to = now()->endOfDay();
+        $fromDate = $request->get('from_date');
+        $toDate = $request->get('to_date');
+        
+        // Default to last 7 days if no dates provided
+        if (!$fromDate && !$toDate) {
+            $from = now()->subDays(6)->startOfDay();
+            $to = now()->endOfDay();
+        } else {
+            $from = $fromDate ? \Carbon\Carbon::parse($fromDate)->startOfDay() : now()->subDays(6)->startOfDay();
+            $to = $toDate ? \Carbon\Carbon::parse($toDate)->endOfDay() : now()->endOfDay();
+        }
+        
         $rows = \App\Models\Sale::selectRaw('DATE(created_at) as d, SUM(total) as t')
             ->whereBetween('created_at', [$from, $to])
             ->where('status', 'paid')
             ->groupBy('d')
             ->orderBy('d')
             ->get();
-        $map = collect();
-        for ($i = 0; $i < 7; $i++) { $map[ $from->copy()->addDays($i)->toDateString() ] = 0; }
-        foreach ($rows as $r) { $map[$r->d] = (float) $r->t; }
+            
+        // Generate date range for the selected period
+        $dateRange = collect();
+        $currentDate = $from->copy();
+        while ($currentDate <= $to) {
+            $dateRange[$currentDate->toDateString()] = 0;
+            $currentDate->addDay();
+        }
+        
+        // Fill in actual sales data
+        foreach ($rows as $r) {
+            $dateRange[$r->d] = (float) $r->t;
+        }
         
         return response()->json([
             'success' => true,
-            'data' => $map->map(function($amount, $date) {
+            'data' => $dateRange->map(function($amount, $date) {
                 return [
                     'date' => $date,
                     'amount' => (float) $amount
@@ -59,17 +79,33 @@ class ReportController extends Controller
         ]);
     }
 
-    public function salesByCategory()
+    public function salesByCategory(Request $request)
     {
-        $from = now()->subDays(30);
-        $rows = \App\Models\SaleItem::query()
+        $fromDate = $request->get('from_date');
+        $toDate = $request->get('to_date');
+        
+        // Default to last 30 days if no dates provided
+        if (!$fromDate && !$toDate) {
+            $from = now()->subDays(30);
+        } else {
+            $from = $fromDate ? \Carbon\Carbon::parse($fromDate)->startOfDay() : now()->subDays(30);
+        }
+        
+        $query = \App\Models\SaleItem::query()
             ->selectRaw('COALESCE(categories.name, "Uncategorized") as category, SUM(sale_items.total) as t')
             ->join('products', 'sale_items.product_id', '=', 'products.id')
             ->leftJoin('categories', 'products.category_id', '=', 'categories.id')
             ->join('sales', 'sale_items.sale_id', '=', 'sales.id')
-            ->where('sales.status', 'paid')
-            ->where('sales.created_at', '>=', $from)
-            ->groupBy('category')
+            ->where('sales.status', 'paid');
+            
+        if ($fromDate) {
+            $query->whereDate('sales.created_at', '>=', $fromDate);
+        }
+        if ($toDate) {
+            $query->whereDate('sales.created_at', '<=', $toDate);
+        }
+        
+        $rows = $query->groupBy('category')
             ->orderBy('category')
             ->get();
             
@@ -228,7 +264,6 @@ class ReportController extends Controller
     {
         $fromDate = $request->get('from_date');
         $toDate = $request->get('to_date');
-        $reportType = $request->get('report_type', 'sales');
 
         $query = Sale::where('status', 'paid');
 
@@ -250,6 +285,68 @@ class ReportController extends Controller
         return response($csvContent)
             ->header('Content-Type', 'text/csv; charset=UTF-8')
             ->header('Content-Disposition', 'attachment; filename="sales-report-' . ($fromDate ?? 'all') . '-to-' . ($toDate ?? 'all') . '.csv"')
+            ->header('Pragma', 'no-cache')
+            ->header('Expires', '0');
+    }
+
+    public function inventoryExport(Request $request)
+    {
+        $fromDate = $request->get('from_date');
+        $toDate = $request->get('to_date');
+        $type = $request->get('type');
+
+        $query = \App\Models\InventoryMovement::with('product');
+
+        if ($fromDate) {
+            $query->whereDate('created_at', '>=', $fromDate);
+        }
+        if ($toDate) {
+            $query->whereDate('created_at', '<=', $toDate);
+        }
+        if ($type && $type !== 'all') {
+            $query->where('type', $type);
+        }
+
+        $movements = $query->orderBy('created_at', 'desc')->get();
+
+        // Generate CSV content
+        $csvContent = $this->generateInventoryCsvContent($movements);
+        
+        // Return CSV file with proper headers
+        return response($csvContent)
+            ->header('Content-Type', 'text/csv; charset=UTF-8')
+            ->header('Content-Disposition', 'attachment; filename="inventory-report-' . ($fromDate ?? 'all') . '-to-' . ($toDate ?? 'all') . '.csv"')
+            ->header('Pragma', 'no-cache')
+            ->header('Expires', '0');
+    }
+
+    public function productsExport(Request $request)
+    {
+        $fromDate = $request->get('from_date');
+        $toDate = $request->get('to_date');
+        $categoryId = $request->get('category_id');
+
+        $query = \App\Models\Product::with('category');
+
+        if ($fromDate) {
+            $query->whereDate('created_at', '>=', $fromDate);
+        }
+        if ($toDate) {
+            $query->whereDate('created_at', '<=', $toDate);
+        }
+        if ($categoryId && $categoryId !== 'all') {
+            $query->where('category_id', $categoryId);
+        }
+
+        $products = $query->orderBy('name')->get();
+
+        // Generate CSV content
+        $csvContent = $this->generateProductsCsvContent($products);
+        
+        // Return CSV file with proper headers
+        return response($csvContent)
+            ->header('Content-Type', 'text/csv; charset=UTF-8')
+            ->header('Content-Disposition', 'attachment; filename="products-report-' . ($fromDate ?? 'all') . '-to-' . ($toDate ?? 'all') . '.csv"')
             ->header('Pragma', 'no-cache')
             ->header('Expires', '0');
     }
@@ -285,6 +382,82 @@ class ReportController extends Controller
                 'GCash',
                 $sale->items->count(),
                 $items
+            ]);
+        }
+        
+        rewind($output);
+        $csvContent = stream_get_contents($output);
+        fclose($output);
+        
+        return $csvContent;
+    }
+
+    private function generateInventoryCsvContent($movements)
+    {
+        $output = fopen('php://temp', 'r+');
+        
+        // Add BOM for UTF-8
+        fwrite($output, "\xEF\xBB\xBF");
+        
+        // CSV headers
+        fputcsv($output, [
+            'Date',
+            'Time',
+            'Product Name',
+            'SKU',
+            'Movement Type',
+            'Quantity',
+            'Reason',
+            'Related Sale ID'
+        ]);
+        
+        foreach ($movements as $movement) {
+            fputcsv($output, [
+                $movement->created_at->format('Y-m-d'),
+                $movement->created_at->format('H:i:s'),
+                $movement->product ? $movement->product->name : 'Unknown Product',
+                $movement->product ? $movement->product->sku : 'N/A',
+                $movement->type === 'in' ? 'Stock In' : 'Stock Out',
+                $movement->quantity,
+                $movement->reason ?: 'N/A',
+                $movement->sale_id ?: 'N/A'
+            ]);
+        }
+        
+        rewind($output);
+        $csvContent = stream_get_contents($output);
+        fclose($output);
+        
+        return $csvContent;
+    }
+
+    private function generateProductsCsvContent($products)
+    {
+        $output = fopen('php://temp', 'r+');
+        
+        // Add BOM for UTF-8
+        fwrite($output, "\xEF\xBB\xBF");
+        
+        // CSV headers
+        fputcsv($output, [
+            'SKU',
+            'Product Name',
+            'Category',
+            'Price',
+            'Stock',
+            'Description',
+            'Created Date'
+        ]);
+        
+        foreach ($products as $product) {
+            fputcsv($output, [
+                $product->sku,
+                $product->name,
+                $product->category ? $product->category->name : 'Uncategorized',
+                '₱' . number_format($product->price, 2),
+                $product->stock ?? 0,
+                $product->description ?: 'N/A',
+                $product->created_at->format('Y-m-d')
             ]);
         }
         

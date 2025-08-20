@@ -71,7 +71,16 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         label: '',
         "class": 'text-end'
       }],
-      categoryOptions: []
+      categoryOptions: [],
+      exportFilters: {
+        from_date: '',
+        to_date: '',
+        category_id: 'all'
+      },
+      exportCategoryOptions: [{
+        value: 'all',
+        text: 'All Categories'
+      }]
     };
   },
   created: function created() {
@@ -92,6 +101,18 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
             case 1:
               res = _context.v;
               _this.categoryOptions = [{
+                value: null,
+                text: 'Uncategorized'
+              }].concat(_toConsumableArray(res.data.map(function (c) {
+                return {
+                  value: c.id,
+                  text: c.name
+                };
+              })));
+              _this.exportCategoryOptions = [{
+                value: 'all',
+                text: 'All Categories'
+              }, {
                 value: null,
                 text: 'Uncategorized'
               }].concat(_toConsumableArray(res.data.map(function (c) {
@@ -226,6 +247,62 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
           });
         });
       });
+    },
+    openExportModal: function openExportModal() {
+      this.$bvModal.show('export-csv-modal');
+    },
+    exportProductsCsv: function exportProductsCsv() {
+      var _this5 = this;
+      return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2() {
+        var params, res, url, link, _t2;
+        return _regenerator().w(function (_context2) {
+          while (1) switch (_context2.p = _context2.n) {
+            case 0:
+              _context2.p = 0;
+              params = {};
+              if (_this5.exportFilters.from_date) params.from_date = _this5.exportFilters.from_date;
+              if (_this5.exportFilters.to_date) params.to_date = _this5.exportFilters.to_date;
+              if (_this5.exportFilters.category_id && _this5.exportFilters.category_id !== 'all') {
+                params.category_id = _this5.exportFilters.category_id;
+              }
+              _context2.n = 1;
+              return axios__WEBPACK_IMPORTED_MODULE_0___default().get("/api/reports/products-export", {
+                params: params,
+                responseType: 'blob'
+              });
+            case 1:
+              res = _context2.v;
+              url = window.URL.createObjectURL(new Blob([res.data]));
+              link = document.createElement('a');
+              link.href = url;
+              link.setAttribute('download', "products-report-".concat(_this5.exportFilters.from_date || 'all', "-to-").concat(_this5.exportFilters.to_date || 'all', ".csv"));
+              document.body.appendChild(link);
+              link.click();
+              link.remove();
+              sweetalert2__WEBPACK_IMPORTED_MODULE_1___default().fire({
+                icon: 'success',
+                title: 'Export Successful',
+                text: 'CSV report has been downloaded',
+                timer: 1500,
+                showConfirmButton: false
+              });
+              _this5.$bvModal.hide('export-csv-modal');
+              _context2.n = 3;
+              break;
+            case 2:
+              _context2.p = 2;
+              _t2 = _context2.v;
+              console.error('Failed to export products report:', _t2);
+              sweetalert2__WEBPACK_IMPORTED_MODULE_1___default().fire({
+                icon: 'error',
+                title: 'Export Failed',
+                text: 'Failed to export products report to CSV'
+              });
+            case 3:
+              return _context2.a(2);
+          }
+        }, _callee2, null, [[0, 2]]);
+      }))();
     }
   }
 });
@@ -260,6 +337,16 @@ var render = function render() {
       cols: "auto"
     }
   }, [_c("b-button", {
+    staticClass: "me-2",
+    attrs: {
+      variant: "success"
+    },
+    on: {
+      click: _vm.openExportModal
+    }
+  }, [_c("i", {
+    staticClass: "fas fa-file-csv"
+  }), _vm._v(" Export to CSV\n      ")]), _vm._v(" "), _c("b-button", {
     attrs: {
       variant: "primary"
     },
@@ -425,7 +512,101 @@ var render = function render() {
       type: "submit",
       variant: "success"
     }
-  }, [_vm._v(_vm._s(_vm.form.id ? "Update" : "Save"))])], 1)], 1)], 1), _vm._v(" "), _c("b-card", [_c("b-table", {
+  }, [_vm._v(_vm._s(_vm.form.id ? "Update" : "Save"))])], 1)], 1)], 1), _vm._v(" "), _c("b-modal", {
+    attrs: {
+      id: "export-csv-modal",
+      title: "Export Products to CSV",
+      "hide-footer": "",
+      size: "md"
+    }
+  }, [_c("b-form", {
+    on: {
+      submit: function submit($event) {
+        $event.preventDefault();
+        return _vm.exportProductsCsv.apply(null, arguments);
+      }
+    }
+  }, [_c("b-row", {
+    staticClass: "g-3"
+  }, [_c("b-col", {
+    attrs: {
+      md: "6"
+    }
+  }, [_c("b-form-group", {
+    attrs: {
+      label: "From Date"
+    }
+  }, [_c("b-form-input", {
+    attrs: {
+      type: "date",
+      placeholder: "Start date"
+    },
+    model: {
+      value: _vm.exportFilters.from_date,
+      callback: function callback($$v) {
+        _vm.$set(_vm.exportFilters, "from_date", $$v);
+      },
+      expression: "exportFilters.from_date"
+    }
+  })], 1)], 1), _vm._v(" "), _c("b-col", {
+    attrs: {
+      md: "6"
+    }
+  }, [_c("b-form-group", {
+    attrs: {
+      label: "To Date"
+    }
+  }, [_c("b-form-input", {
+    attrs: {
+      type: "date",
+      placeholder: "End date"
+    },
+    model: {
+      value: _vm.exportFilters.to_date,
+      callback: function callback($$v) {
+        _vm.$set(_vm.exportFilters, "to_date", $$v);
+      },
+      expression: "exportFilters.to_date"
+    }
+  })], 1)], 1), _vm._v(" "), _c("b-col", {
+    attrs: {
+      md: "12"
+    }
+  }, [_c("b-form-group", {
+    attrs: {
+      label: "Category"
+    }
+  }, [_c("b-form-select", {
+    attrs: {
+      options: _vm.exportCategoryOptions,
+      placeholder: "All Categories"
+    },
+    model: {
+      value: _vm.exportFilters.category_id,
+      callback: function callback($$v) {
+        _vm.$set(_vm.exportFilters, "category_id", $$v);
+      },
+      expression: "exportFilters.category_id"
+    }
+  })], 1)], 1)], 1), _vm._v(" "), _c("div", {
+    staticClass: "d-flex justify-content-end gap-2 mt-3"
+  }, [_c("b-button", {
+    attrs: {
+      variant: "secondary"
+    },
+    on: {
+      click: function click($event) {
+        return _vm.$bvModal.hide("export-csv-modal");
+      }
+    }
+  }, [_vm._v("\n          Cancel\n        ")]), _vm._v(" "), _c("b-button", {
+    attrs: {
+      type: "submit",
+      variant: "success"
+    }
+  }, [_c("i", {
+    staticClass: "fas fa-file-csv"
+  }), _vm._v(" Export to CSV\n        ")])], 1)], 1)], 1), _vm._v(" "), _c("b-card", [_c("b-table", {
     attrs: {
       small: "",
       hover: "",

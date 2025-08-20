@@ -25,13 +25,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
   name: 'Account',
   data: function data() {
     return {
-      user: {},
       users: [],
-      passwordForm: {
-        current_password: '',
-        new_password: '',
-        confirm_password: ''
-      },
       userForm: {
         id: null,
         name: '',
@@ -85,17 +79,16 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
   },
   computed: {
     isAdmin: function isAdmin() {
-      return this.user && this.user.role === 'admin';
+      return this.$auth && this.$auth.user && this.$auth.user.role === 'admin';
     }
   },
   created: function created() {
-    this.loadUserData();
     if (this.isAdmin) {
       this.loadUsers();
     }
   },
   methods: {
-    loadUserData: function loadUserData() {
+    loadUsers: function loadUsers() {
       var _this = this;
       return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
         var res, _t;
@@ -104,102 +97,25 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
             case 0:
               _context.p = 0;
               _context.n = 1;
-              return axios__WEBPACK_IMPORTED_MODULE_0___default().get('/api/auth/me');
+              return axios__WEBPACK_IMPORTED_MODULE_0___default().get('/api/users');
             case 1:
               res = _context.v;
-              _this.user = res.data.data;
+              _this.users = res.data.data || [];
               _context.n = 3;
               break;
             case 2:
               _context.p = 2;
               _t = _context.v;
-              console.error('Failed to load user data:', _t);
-            case 3:
-              return _context.a(2);
-          }
-        }, _callee, null, [[0, 2]]);
-      }))();
-    },
-    loadUsers: function loadUsers() {
-      var _this2 = this;
-      return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2() {
-        var res, _t2;
-        return _regenerator().w(function (_context2) {
-          while (1) switch (_context2.p = _context2.n) {
-            case 0:
-              _context2.p = 0;
-              _context2.n = 1;
-              return axios__WEBPACK_IMPORTED_MODULE_0___default().get('/api/users');
-            case 1:
-              res = _context2.v;
-              _this2.users = res.data.data || [];
-              _context2.n = 3;
-              break;
-            case 2:
-              _context2.p = 2;
-              _t2 = _context2.v;
-              console.error('Failed to load users:', _t2);
+              console.error('Failed to load users:', _t);
               sweetalert2__WEBPACK_IMPORTED_MODULE_1___default().fire({
                 icon: 'error',
                 title: 'Load Failed',
                 text: 'Failed to load users'
               });
             case 3:
-              return _context2.a(2);
+              return _context.a(2);
           }
-        }, _callee2, null, [[0, 2]]);
-      }))();
-    },
-    changePassword: function changePassword() {
-      var _this3 = this;
-      return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee3() {
-        var _t3;
-        return _regenerator().w(function (_context3) {
-          while (1) switch (_context3.p = _context3.n) {
-            case 0:
-              if (!(_this3.passwordForm.new_password !== _this3.passwordForm.confirm_password)) {
-                _context3.n = 1;
-                break;
-              }
-              sweetalert2__WEBPACK_IMPORTED_MODULE_1___default().fire({
-                icon: 'error',
-                title: 'Password Mismatch',
-                text: 'New password and confirm password do not match'
-              });
-              return _context3.a(2);
-            case 1:
-              _context3.p = 1;
-              _context3.n = 2;
-              return axios__WEBPACK_IMPORTED_MODULE_0___default().post('/api/auth/change-password', {
-                current_password: _this3.passwordForm.current_password,
-                new_password: _this3.passwordForm.new_password
-              });
-            case 2:
-              sweetalert2__WEBPACK_IMPORTED_MODULE_1___default().fire({
-                icon: 'success',
-                title: 'Password Changed',
-                text: 'Your password has been updated successfully'
-              });
-              _this3.passwordForm = {
-                current_password: '',
-                new_password: '',
-                confirm_password: ''
-              };
-              _context3.n = 4;
-              break;
-            case 3:
-              _context3.p = 3;
-              _t3 = _context3.v;
-              console.error('Failed to change password:', _t3);
-              sweetalert2__WEBPACK_IMPORTED_MODULE_1___default().fire({
-                icon: 'error',
-                title: 'Change Failed',
-                text: _t3.response && _t3.response.data && _t3.response.data.message || 'Failed to change password'
-              });
-            case 4:
-              return _context3.a(2);
-          }
-        }, _callee3, null, [[1, 3]]);
+        }, _callee, null, [[0, 2]]);
       }))();
     },
     openCreateModal: function openCreateModal() {
@@ -223,14 +139,14 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       this.$bvModal.show('user-modal');
     },
     saveUser: function saveUser() {
-      var _this4 = this;
-      return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee4() {
-        var _t4;
-        return _regenerator().w(function (_context4) {
-          while (1) switch (_context4.p = _context4.n) {
+      var _this2 = this;
+      return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee2() {
+        var _t2;
+        return _regenerator().w(function (_context2) {
+          while (1) switch (_context2.p = _context2.n) {
             case 0:
-              if (!(!_this4.userForm.id && _this4.userForm.password !== _this4.userForm.confirm_password)) {
-                _context4.n = 1;
+              if (!(!_this2.userForm.id && _this2.userForm.password !== _this2.userForm.confirm_password)) {
+                _context2.n = 1;
                 break;
               }
               sweetalert2__WEBPACK_IMPORTED_MODULE_1___default().fire({
@@ -238,68 +154,68 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
                 title: 'Password Mismatch',
                 text: 'Password and confirm password do not match'
               });
-              return _context4.a(2);
+              return _context2.a(2);
             case 1:
-              _context4.p = 1;
-              if (!_this4.userForm.id) {
-                _context4.n = 3;
+              _context2.p = 1;
+              if (!_this2.userForm.id) {
+                _context2.n = 3;
                 break;
               }
-              _context4.n = 2;
-              return axios__WEBPACK_IMPORTED_MODULE_0___default().put("/api/users/".concat(_this4.userForm.id), {
-                name: _this4.userForm.name,
-                email: _this4.userForm.email,
-                role: _this4.userForm.role,
-                status: _this4.userForm.status
+              _context2.n = 2;
+              return axios__WEBPACK_IMPORTED_MODULE_0___default().put("/api/users/".concat(_this2.userForm.id), {
+                name: _this2.userForm.name,
+                email: _this2.userForm.email,
+                role: _this2.userForm.role,
+                status: _this2.userForm.status
               });
             case 2:
-              _context4.n = 4;
+              _context2.n = 4;
               break;
             case 3:
-              _context4.n = 4;
+              _context2.n = 4;
               return axios__WEBPACK_IMPORTED_MODULE_0___default().post('/api/users', {
-                name: _this4.userForm.name,
-                email: _this4.userForm.email,
-                role: _this4.userForm.role,
-                status: _this4.userForm.status,
-                password: _this4.userForm.password
+                name: _this2.userForm.name,
+                email: _this2.userForm.email,
+                role: _this2.userForm.role,
+                status: _this2.userForm.status,
+                password: _this2.userForm.password
               });
             case 4:
               sweetalert2__WEBPACK_IMPORTED_MODULE_1___default().fire({
                 icon: 'success',
                 title: 'Success',
-                text: "User ".concat(_this4.userForm.id ? 'updated' : 'created', " successfully")
+                text: "User ".concat(_this2.userForm.id ? 'updated' : 'created', " successfully")
               });
-              _this4.$bvModal.hide('user-modal');
-              _this4.loadUsers();
-              _context4.n = 6;
+              _this2.$bvModal.hide('user-modal');
+              _this2.loadUsers();
+              _context2.n = 6;
               break;
             case 5:
-              _context4.p = 5;
-              _t4 = _context4.v;
-              console.error('Failed to save user:', _t4);
+              _context2.p = 5;
+              _t2 = _context2.v;
+              console.error('Failed to save user:', _t2);
               sweetalert2__WEBPACK_IMPORTED_MODULE_1___default().fire({
                 icon: 'error',
                 title: 'Save Failed',
-                text: _t4.response && _t4.response.data && _t4.response.data.message || 'Failed to save user'
+                text: _t2.response && _t2.response.data && _t2.response.data.message || 'Failed to save user'
               });
             case 6:
-              return _context4.a(2);
+              return _context2.a(2);
           }
-        }, _callee4, null, [[1, 5]]);
+        }, _callee2, null, [[1, 5]]);
       }))();
     },
     toggleUserStatus: function toggleUserStatus(user) {
-      var _this5 = this;
-      return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee5() {
-        var newStatus, action, _t5;
-        return _regenerator().w(function (_context5) {
-          while (1) switch (_context5.p = _context5.n) {
+      var _this3 = this;
+      return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee3() {
+        var newStatus, action, _t3;
+        return _regenerator().w(function (_context3) {
+          while (1) switch (_context3.p = _context3.n) {
             case 0:
               newStatus = user.status === 'active' ? 'inactive' : 'active';
               action = newStatus === 'active' ? 'activate' : 'deactivate';
-              _context5.p = 1;
-              _context5.n = 2;
+              _context3.p = 1;
+              _context3.n = 2;
               return axios__WEBPACK_IMPORTED_MODULE_0___default().put("/api/users/".concat(user.id, "/status"), {
                 status: newStatus
               });
@@ -309,32 +225,32 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
                 title: 'Status Updated',
                 text: "User ".concat(action, "d successfully")
               });
-              _this5.loadUsers();
-              _context5.n = 4;
+              _this3.loadUsers();
+              _context3.n = 4;
               break;
             case 3:
-              _context5.p = 3;
-              _t5 = _context5.v;
-              console.error('Failed to update user status:', _t5);
+              _context3.p = 3;
+              _t3 = _context3.v;
+              console.error('Failed to update user status:', _t3);
               sweetalert2__WEBPACK_IMPORTED_MODULE_1___default().fire({
                 icon: 'error',
                 title: 'Update Failed',
                 text: 'Failed to update user status'
               });
             case 4:
-              return _context5.a(2);
+              return _context3.a(2);
           }
-        }, _callee5, null, [[1, 3]]);
+        }, _callee3, null, [[1, 3]]);
       }))();
     },
     deleteUser: function deleteUser(user) {
-      var _this6 = this;
-      return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee6() {
-        var result, _t6;
-        return _regenerator().w(function (_context6) {
-          while (1) switch (_context6.p = _context6.n) {
+      var _this4 = this;
+      return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee4() {
+        var result, _t4;
+        return _regenerator().w(function (_context4) {
+          while (1) switch (_context4.p = _context4.n) {
             case 0:
-              _context6.n = 1;
+              _context4.n = 1;
               return sweetalert2__WEBPACK_IMPORTED_MODULE_1___default().fire({
                 icon: 'warning',
                 title: 'Delete User',
@@ -345,13 +261,13 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
                 confirmButtonText: 'Yes, delete!'
               });
             case 1:
-              result = _context6.v;
+              result = _context4.v;
               if (!result.isConfirmed) {
-                _context6.n = 5;
+                _context4.n = 5;
                 break;
               }
-              _context6.p = 2;
-              _context6.n = 3;
+              _context4.p = 2;
+              _context4.n = 3;
               return axios__WEBPACK_IMPORTED_MODULE_0___default()["delete"]("/api/users/".concat(user.id));
             case 3:
               sweetalert2__WEBPACK_IMPORTED_MODULE_1___default().fire({
@@ -359,22 +275,22 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
                 title: 'Deleted!',
                 text: 'User has been deleted successfully'
               });
-              _this6.loadUsers();
-              _context6.n = 5;
+              _this4.loadUsers();
+              _context4.n = 5;
               break;
             case 4:
-              _context6.p = 4;
-              _t6 = _context6.v;
-              console.error('Failed to delete user:', _t6);
+              _context4.p = 4;
+              _t4 = _context4.v;
+              console.error('Failed to delete user:', _t4);
               sweetalert2__WEBPACK_IMPORTED_MODULE_1___default().fire({
                 icon: 'error',
                 title: 'Delete Failed',
                 text: 'Failed to delete user'
               });
             case 5:
-              return _context6.a(2);
+              return _context4.a(2);
           }
-        }, _callee6, null, [[2, 4]]);
+        }, _callee4, null, [[2, 4]]);
       }))();
     },
     resetUserForm: function resetUserForm() {
@@ -421,7 +337,7 @@ var render = function render() {
     staticClass: "mb-3 align-items-center"
   }, [_c("b-col", [_c("h2", {
     staticClass: "mb-0"
-  }, [_vm._v("Account Management")])]), _vm._v(" "), _vm.isAdmin ? _c("b-col", {
+  }, [_vm._v("User Management")])]), _vm._v(" "), _vm.isAdmin ? _c("b-col", {
     attrs: {
       cols: "auto"
     }
@@ -434,160 +350,9 @@ var render = function render() {
     }
   }, [_c("i", {
     staticClass: "fas fa-plus"
-  }), _vm._v(" Create Account\n      ")])], 1) : _vm._e()], 1), _vm._v(" "), _c("b-card", {
-    staticClass: "mb-3"
-  }, [_c("h5", {
+  }), _vm._v(" Create User\n      ")])], 1) : _vm._e()], 1), _vm._v(" "), _vm.isAdmin ? _c("b-card", [_c("h5", {
     staticClass: "card-title"
-  }, [_vm._v("My Account")]), _vm._v(" "), _c("b-row", [_c("b-col", {
-    attrs: {
-      sm: "6"
-    }
-  }, [_c("b-form-group", {
-    attrs: {
-      label: "Name"
-    }
-  }, [_c("b-form-input", {
-    attrs: {
-      readonly: ""
-    },
-    model: {
-      value: _vm.user.name,
-      callback: function callback($$v) {
-        _vm.$set(_vm.user, "name", $$v);
-      },
-      expression: "user.name"
-    }
-  })], 1)], 1), _vm._v(" "), _c("b-col", {
-    attrs: {
-      sm: "6"
-    }
-  }, [_c("b-form-group", {
-    attrs: {
-      label: "Email"
-    }
-  }, [_c("b-form-input", {
-    attrs: {
-      readonly: ""
-    },
-    model: {
-      value: _vm.user.email,
-      callback: function callback($$v) {
-        _vm.$set(_vm.user, "email", $$v);
-      },
-      expression: "user.email"
-    }
-  })], 1)], 1)], 1), _vm._v(" "), _c("b-row", [_c("b-col", {
-    attrs: {
-      sm: "6"
-    }
-  }, [_c("b-form-group", {
-    attrs: {
-      label: "Role"
-    }
-  }, [_c("b-form-input", {
-    attrs: {
-      value: _vm.user.role === "admin" ? "Administrator" : "Cashier",
-      readonly: ""
-    }
-  })], 1)], 1), _vm._v(" "), _c("b-col", {
-    attrs: {
-      sm: "6"
-    }
-  }, [_c("b-form-group", {
-    attrs: {
-      label: "Member Since"
-    }
-  }, [_c("b-form-input", {
-    attrs: {
-      value: _vm.formatDate(_vm.user.created_at),
-      readonly: ""
-    }
-  })], 1)], 1)], 1)], 1), _vm._v(" "), _c("b-card", {
-    staticClass: "mb-3"
-  }, [_c("h5", {
-    staticClass: "card-title"
-  }, [_vm._v("Change Password")]), _vm._v(" "), _c("b-form", {
-    on: {
-      submit: function submit($event) {
-        $event.preventDefault();
-        return _vm.changePassword.apply(null, arguments);
-      }
-    }
-  }, [_c("b-row", [_c("b-col", {
-    attrs: {
-      sm: "4"
-    }
-  }, [_c("b-form-group", {
-    attrs: {
-      label: "Current Password"
-    }
-  }, [_c("b-form-input", {
-    attrs: {
-      type: "password",
-      required: "",
-      placeholder: "Enter current password"
-    },
-    model: {
-      value: _vm.passwordForm.current_password,
-      callback: function callback($$v) {
-        _vm.$set(_vm.passwordForm, "current_password", $$v);
-      },
-      expression: "passwordForm.current_password"
-    }
-  })], 1)], 1), _vm._v(" "), _c("b-col", {
-    attrs: {
-      sm: "4"
-    }
-  }, [_c("b-form-group", {
-    attrs: {
-      label: "New Password"
-    }
-  }, [_c("b-form-input", {
-    attrs: {
-      type: "password",
-      required: "",
-      placeholder: "Enter new password"
-    },
-    model: {
-      value: _vm.passwordForm.new_password,
-      callback: function callback($$v) {
-        _vm.$set(_vm.passwordForm, "new_password", $$v);
-      },
-      expression: "passwordForm.new_password"
-    }
-  })], 1)], 1), _vm._v(" "), _c("b-col", {
-    attrs: {
-      sm: "4"
-    }
-  }, [_c("b-form-group", {
-    attrs: {
-      label: "Confirm Password"
-    }
-  }, [_c("b-form-input", {
-    attrs: {
-      type: "password",
-      required: "",
-      placeholder: "Confirm new password"
-    },
-    model: {
-      value: _vm.passwordForm.confirm_password,
-      callback: function callback($$v) {
-        _vm.$set(_vm.passwordForm, "confirm_password", $$v);
-      },
-      expression: "passwordForm.confirm_password"
-    }
-  })], 1)], 1)], 1), _vm._v(" "), _c("div", {
-    staticClass: "text-right"
-  }, [_c("b-button", {
-    attrs: {
-      type: "submit",
-      variant: "primary"
-    }
-  }, [_c("i", {
-    staticClass: "fas fa-key"
-  }), _vm._v(" Change Password\n        ")])], 1)], 1)], 1), _vm._v(" "), _vm.isAdmin ? _c("b-card", [_c("h5", {
-    staticClass: "card-title"
-  }, [_vm._v("User Management")]), _vm._v(" "), _c("b-table", {
+  }, [_vm._v("All Users")]), _vm._v(" "), _c("b-table", {
     attrs: {
       small: "",
       hover: "",
@@ -653,7 +418,7 @@ var render = function render() {
           }
         }, [_c("i", {
           "class": item.status === "active" ? "fas fa-ban" : "fas fa-check"
-        })]), _vm._v(" "), item.id !== _vm.user.id ? _c("b-button", {
+        })]), _vm._v(" "), _c("b-button", {
           attrs: {
             size: "sm",
             variant: "outline-danger"
@@ -665,7 +430,7 @@ var render = function render() {
           }
         }, [_c("i", {
           staticClass: "fas fa-trash"
-        })]) : _vm._e()], 1)];
+        })])], 1)];
       }
     }, {
       key: "empty",
@@ -677,8 +442,12 @@ var render = function render() {
         }), _vm._v(" "), _c("p", [_vm._v("No users found")])])];
       },
       proxy: true
-    }], null, false, 2872945897)
-  })], 1) : _vm._e(), _vm._v(" "), _c("b-modal", {
+    }], null, false, 916479379)
+  })], 1) : _c("b-card", [_c("div", {
+    staticClass: "text-center text-muted py-5"
+  }, [_c("i", {
+    staticClass: "fas fa-lock fa-3x mb-3"
+  }), _vm._v(" "), _c("h5", [_vm._v("Access Restricted")]), _vm._v(" "), _c("p", [_vm._v("Only administrators can manage user accounts.")])])]), _vm._v(" "), _c("b-modal", {
     attrs: {
       id: _vm.userModal.id,
       title: _vm.userModal.title,

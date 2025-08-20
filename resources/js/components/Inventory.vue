@@ -3,15 +3,18 @@
     <b-row class="mb-3 align-items-center">
       <b-col><h2 class="mb-0">Inventory Management</h2></b-col>
       <b-col cols="auto">
-        <b-button variant="success" @click="openPrintModal">
-          <i class="fas fa-print"></i> Print Report
-        </b-button>
+                 <b-button variant="success" @click="openExportModal">
+           <i class="fas fa-file-csv"></i> Export to CSV
+         </b-button>
       </b-col>
     </b-row>
 
     <!-- Date Filters -->
     <b-card class="mb-3">
-      <h6 class="card-title">Filter Movements</h6>
+      <b-row>
+        <h6 class="card-title">Filter Movements</h6>
+      </b-row>
+      <br>
       <b-form @submit.prevent="applyFilters">
         <b-row class="g-3">
           <b-col sm="3">
@@ -41,7 +44,7 @@
               />
             </b-form-group>
           </b-col>
-          <b-col sm="3" class="d-flex align-items-end">
+          <b-col sm="3" class="d-flex align-items-end" style="margin-bottom: 16px;">
             <div class="d-flex gap-2">
               <b-button type="submit" variant="primary">Apply Filters</b-button>
               <b-button variant="outline-secondary" @click="clearFilters">Clear</b-button>
@@ -61,7 +64,7 @@
       </b-col>
       <b-col md="3">
         <b-card class="text-center" bg-variant="success" text-variant="white">
-          <h4>{{ summary.total_stock || 0 }}</h4>
+          <h4>{{ summary.stock_on_hand || 0 }}</h4>
           <small>Total Stock</small>
         </b-card>
       </b-col>
@@ -81,7 +84,10 @@
 
     <!-- Inventory Adjustment Form -->
     <b-card class="mb-3">
-      <h5 class="card-title">Adjust Inventory</h5>
+      <b-row>
+        <h5 class="card-title">Adjust Inventory</h5>
+      </b-row>
+      <br>
       <b-form @submit.prevent="adjust">
         <b-row class="g-3">
           <b-col sm="4">
@@ -122,7 +128,7 @@
               />
             </b-form-group>
           </b-col>
-          <b-col sm="1" class="d-flex align-items-end">
+          <b-col sm="1" class="d-flex align-items-end" style="margin-bottom: 16px;">
             <b-button type="submit" variant="primary" class="w-100">
               <i class="fas fa-check"></i> Apply
             </b-button>
@@ -179,19 +185,19 @@
         <div class="text-muted">
           Showing {{ movements.from || 0 }} to {{ movements.to || 0 }} of {{ movements.total || 0 }} movements
         </div>
-        <b-pagination
-          v-model="currentPage"
-          :total-rows="movements.total || 0"
-          :per-page="movements.per_page || 15"
-          :page="currentPage"
-          @change="load"
-          align="center"
-          size="sm"
-          first-text="«"
-          last-text="»"
-          prev-text="‹"
-          next-text="›"
-        />
+                 <b-pagination
+           v-model="currentPage"
+           :total-rows="movements.total || 0"
+           :per-page="movements.per_page || 25"
+           :page="currentPage"
+           @change="load"
+           align="center"
+           size="sm"
+           first-text="«"
+           last-text="»"
+           prev-text="‹"
+           next-text="›"
+         />
       </div>
     </b-card>
 
@@ -246,66 +252,46 @@
       </div>
     </b-modal>
 
-    <!-- Print Report Modal -->
-    <b-modal id="print-report-modal" title="Print Inventory Report" hide-footer size="lg">
-      <b-form @submit.prevent="printInventoryReport">
+    <!-- Export CSV Modal -->
+    <b-modal id="export-excel-modal" title="Export Inventory Report to CSV" hide-footer size="md">
+      <b-form @submit.prevent="exportInventoryCsv">
         <b-row class="g-3">
           <b-col md="6">
-            <b-form-group label="Report Date Range">
+            <b-form-group label="From Date">
               <b-form-input 
-                v-model="printFilters.from_date" 
+                v-model="exportFilters.from_date" 
                 type="date" 
                 placeholder="Start date"
-                required
               />
             </b-form-group>
           </b-col>
           <b-col md="6">
             <b-form-group label="To Date">
               <b-form-input 
-                v-model="printFilters.to_date" 
+                v-model="exportFilters.to_date" 
                 type="date" 
                 placeholder="End date"
-                required
               />
             </b-form-group>
           </b-col>
-          <b-col md="6">
+          <b-col md="12">
             <b-form-group label="Movement Type">
               <b-form-select 
-                v-model="printFilters.type" 
+                v-model="exportFilters.type" 
                 :options="filterTypeOptions"
                 placeholder="All Types"
               />
             </b-form-group>
           </b-col>
-          <b-col md="6">
-            <b-form-group label="Report Type">
-              <b-form-select 
-                v-model="printFilters.report_type" 
-                :options="reportTypeOptions"
-                required
-              />
-            </b-form-group>
-          </b-col>
-          <b-col md="12">
-            <b-form-group label="Include in Report">
-              <b-form-checkbox-group v-model="printFilters.includes">
-                <b-form-checkbox value="summary">Summary Cards</b-form-checkbox>
-                <b-form-checkbox value="movements">Movement Details</b-form-checkbox>
-                <b-form-checkbox value="products">Product List</b-form-checkbox>
-              </b-form-checkbox-group>
-            </b-form-group>
-          </b-col>
         </b-row>
         
         <div class="d-flex justify-content-end gap-2 mt-3">
-          <b-button variant="secondary" @click="$bvModal.hide('print-report-modal')">
+          <b-button variant="secondary" @click="$bvModal.hide('export-excel-modal')">
             Cancel
           </b-button>
-          <b-button type="submit" variant="success">
-            <i class="fas fa-print"></i> Generate & Print Report
-          </b-button>
+                     <b-button type="submit" variant="success">
+             <i class="fas fa-file-csv"></i> Export to CSV
+           </b-button>
         </div>
       </b-form>
     </b-modal>
@@ -320,7 +306,7 @@ export default {
   name: 'Inventory',
   data() {
     return {
-      movements: { data: [], total: 0, per_page: 15, current_page: 1, last_page: 1, from: 0, to: 0 },
+      movements: { data: [], total: 0, per_page: 25, current_page: 1, last_page: 1, from: 0, to: 0 },
       currentPage: 1,
       summary: {},
       form: { 
@@ -362,25 +348,29 @@ export default {
         { value: 'in', text: 'Stock In' },
         { value: 'out', text: 'Stock Out' },
       ],
-      printFilters: {
+      exportFilters: {
         from_date: '',
         to_date: '',
-        type: 'all',
-        report_type: 'html', // 'html' or 'pdf'
-        includes: ['summary', 'movements', 'products']
-      },
-      reportTypeOptions: [
-        { value: 'html', text: 'HTML Report' },
-        { value: 'pdf', text: 'PDF Report' },
-      ]
+        type: 'all'
+      }
     }
   },
   created() { 
+    this.setDefaultDates();
     this.load(1);
     this.loadProducts();
     this.loadSummary();
   },
   methods: {
+    setDefaultDates() {
+      const today = new Date();
+      const thirtyDaysAgo = new Date(today.getTime() - (30 * 24 * 60 * 60 * 1000));
+      
+      this.filters.from_date = thirtyDaysAgo.toISOString().split('T')[0];
+      this.filters.to_date = today.toISOString().split('T')[0];
+      this.exportFilters.from_date = thirtyDaysAgo.toISOString().split('T')[0];
+      this.exportFilters.to_date = today.toISOString().split('T')[0];
+    },
     async loadProducts() {
       try {
         const res = await axios.get('/api/products');
@@ -395,6 +385,8 @@ export default {
     async loadSummary() {
       try {
         const res = await axios.get('/api/reports/dashboard-summary');
+        console.log('Dashboard summary response:', res.data);
+        console.log('Inventory data:', res.data.inventory);
         this.summary = res.data.inventory || {};
       } catch (e) {
         console.error('Failed to load summary:', e);
@@ -403,10 +395,11 @@ export default {
     async load(page = 1) {
       this.currentPage = page;
       try {
-        const params = {
-          page: page,
-          ...this.filters
-        };
+        const params = { page: page };
+        if (this.filters.from_date) params.from_date = this.filters.from_date;
+        if (this.filters.to_date) params.to_date = this.filters.to_date;
+        if (this.filters.type && this.filters.type !== 'all') params.type = this.filters.type;
+        
         const res = await axios.get(`/api/inventory`, { params });
         this.movements = res.data;
       } catch (e) {
@@ -472,86 +465,51 @@ export default {
         type: 'all'
       };
       this.currentPage = 1; // Reset to first page when filters are cleared
+      this.setDefaultDates(); // Reset to default dates
       this.load(1);
       this.loadSummary();
       this.loadProducts(); // Refresh product options with new stock levels
     },
-    openPrintModal() {
-      this.$bvModal.show('print-report-modal');
+    openExportModal() {
+      this.$bvModal.show('export-excel-modal');
     },
-    async printInventoryReport() {
+         async exportInventoryCsv() {
       try {
-        const params = {
-          from_date: this.printFilters.from_date,
-          to_date: this.printFilters.to_date,
-          type: this.printFilters.type,
-          report_type: this.printFilters.report_type,
-          includes: this.printFilters.includes.join(',')
-        };
+        const params = {};
+        if (this.exportFilters.from_date) params.from_date = this.exportFilters.from_date;
+        if (this.exportFilters.to_date) params.to_date = this.exportFilters.to_date;
+        if (this.exportFilters.type && this.exportFilters.type !== 'all') params.type = this.exportFilters.type;
 
-        const res = await axios.get(`/api/reports/inventory-report`, { params });
-        const reportContent = res.data;
-
-        if (this.printFilters.report_type === 'html') {
-          this.printHtmlReport(reportContent);
-        } else if (this.printFilters.report_type === 'pdf') {
-          this.printPdfReport(reportContent);
-        }
-
-        this.$bvModal.hide('print-report-modal');
-      } catch (e) {
-        console.error('Failed to generate report:', e);
-        Swal.fire({ 
-          icon: 'error', 
-          title: 'Print Failed', 
-          text: 'Failed to generate or print inventory report' 
+        const res = await axios.get(`/api/reports/inventory-export`, { 
+          params,
+          responseType: 'blob'
         });
+        
+        const url = window.URL.createObjectURL(new Blob([res.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `inventory-report-${this.exportFilters.from_date || 'all'}-to-${this.exportFilters.to_date || 'all'}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        
+                 Swal.fire({
+           icon: 'success',
+           title: 'Export Successful',
+           text: 'CSV report has been downloaded',
+           timer: 1500,
+           showConfirmButton: false
+         });
+
+        this.$bvModal.hide('export-excel-modal');
+      } catch (e) {
+        console.error('Failed to export inventory report:', e);
+                 Swal.fire({ 
+           icon: 'error', 
+           title: 'Export Failed', 
+           text: 'Failed to export inventory report to CSV' 
+         });
       }
-    },
-    printHtmlReport(reportContent) {
-      const printWindow = window.open('', '_blank');
-      printWindow.document.write(`
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <title>Inventory Report</title>
-          <style>
-            body { font-family: Arial, sans-serif; margin: 20px; }
-            .header { text-align: center; margin-bottom: 30px; }
-            .summary { display: flex; justify-content: space-between; margin-bottom: 30px; }
-            .summary-item { text-align: center; }
-            .summary-value { font-size: 24px; font-weight: bold; }
-            .summary-label { font-size: 12px; color: #666; }
-            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-            th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-            th { background-color: #f2f2f2; }
-            .type-in { color: green; }
-            .type-out { color: red; }
-            .footer { margin-top: 30px; text-align: center; font-size: 12px; color: #666; }
-          </style>
-        </head>
-        <body>
-          ${reportContent}
-        </body>
-        </html>
-      `);
-      
-      printWindow.document.close();
-      printWindow.focus();
-      printWindow.print();
-      printWindow.close();
-    },
-    printPdfReport(reportContent) {
-      // This method would typically involve a PDF generation library (e.g., jsPDF, pdfmake)
-      // For demonstration, we'll just log the content to the console.
-      console.log('PDF Report Content:', reportContent);
-      Swal.fire({
-        icon: 'info',
-        title: 'PDF Report',
-        html: `<pre>${reportContent}</pre>`,
-        showConfirmButton: true,
-        confirmButtonText: 'Close'
-      });
     },
     async viewSaleDetails(saleId) {
       try {

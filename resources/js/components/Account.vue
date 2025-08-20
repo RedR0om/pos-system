@@ -1,90 +1,21 @@
 <template>
   <b-container fluid>
     <b-row class="mb-3 align-items-center">
-      <b-col><h2 class="mb-0">Account Management</h2></b-col>
+      <b-col><h2 class="mb-0">User Management</h2></b-col>
       <b-col cols="auto" v-if="isAdmin">
         <b-button variant="success" @click="openCreateModal">
-          <i class="fas fa-plus"></i> Create Account
+          <i class="fas fa-plus"></i> Create User
         </b-button>
       </b-col>
     </b-row>
 
-    <!-- Account Info Card -->
-    <b-card class="mb-3">
-      <h5 class="card-title">My Account</h5>
-      <b-row>
-        <b-col sm="6">
-          <b-form-group label="Name">
-            <b-form-input v-model="user.name" readonly />
-          </b-form-group>
-        </b-col>
-        <b-col sm="6">
-          <b-form-group label="Email">
-            <b-form-input v-model="user.email" readonly />
-          </b-form-group>
-        </b-col>
-      </b-row>
-      <b-row>
-        <b-col sm="6">
-          <b-form-group label="Role">
-            <b-form-input :value="user.role === 'admin' ? 'Administrator' : 'Cashier'" readonly />
-          </b-form-group>
-        </b-col>
-        <b-col sm="6">
-          <b-form-group label="Member Since">
-            <b-form-input :value="formatDate(user.created_at)" readonly />
-          </b-form-group>
-        </b-col>
-      </b-row>
-    </b-card>
 
-    <!-- Change Password Card -->
-    <b-card class="mb-3">
-      <h5 class="card-title">Change Password</h5>
-      <b-form @submit.prevent="changePassword">
-        <b-row>
-          <b-col sm="4">
-            <b-form-group label="Current Password">
-              <b-form-input 
-                v-model="passwordForm.current_password" 
-                type="password" 
-                required 
-                placeholder="Enter current password"
-              />
-            </b-form-group>
-          </b-col>
-          <b-col sm="4">
-            <b-form-group label="New Password">
-              <b-form-input 
-                v-model="passwordForm.new_password" 
-                type="password" 
-                required 
-                placeholder="Enter new password"
-              />
-            </b-form-group>
-          </b-col>
-          <b-col sm="4">
-            <b-form-group label="Confirm Password">
-              <b-form-input 
-                v-model="passwordForm.confirm_password" 
-                type="password" 
-                required 
-                placeholder="Confirm new password"
-              />
-            </b-form-group>
-          </b-col>
-        </b-row>
-        <div class="text-right">
-          <b-button type="submit" variant="primary">
-            <i class="fas fa-key"></i> Change Password
-          </b-button>
-        </div>
-      </b-form>
-    </b-card>
+
+
 
     <!-- User Management (Admin Only) -->
     <b-card v-if="isAdmin">
-      <h5 class="card-title">User Management</h5>
+      <h5 class="card-title">All Users</h5>
       <b-table 
         small 
         hover 
@@ -127,7 +58,6 @@
               size="sm" 
               variant="outline-danger" 
               @click="deleteUser(item)"
-              v-if="item.id !== user.id"
             >
               <i class="fas fa-trash"></i>
             </b-button>
@@ -140,6 +70,15 @@
           </div>
         </template>
       </b-table>
+    </b-card>
+
+    <!-- Non-Admin Message -->
+    <b-card v-else>
+      <div class="text-center text-muted py-5">
+        <i class="fas fa-lock fa-3x mb-3"></i>
+        <h5>Access Restricted</h5>
+        <p>Only administrators can manage user accounts.</p>
+      </div>
     </b-card>
 
     <!-- Create/Edit User Modal -->
@@ -242,13 +181,7 @@ export default {
   name: 'Account',
   data() {
     return {
-      user: {},
       users: [],
-      passwordForm: {
-        current_password: '',
-        new_password: '',
-        confirm_password: ''
-      },
       userForm: {
         id: null,
         name: '',
@@ -282,25 +215,15 @@ export default {
   },
   computed: {
     isAdmin() {
-      return this.user && this.user.role === 'admin';
+      return this.$auth && this.$auth.user && this.$auth.user.role === 'admin';
     }
   },
   created() {
-    this.loadUserData();
     if (this.isAdmin) {
       this.loadUsers();
     }
   },
   methods: {
-    async loadUserData() {
-      try {
-        const res = await axios.get('/api/auth/me');
-        this.user = res.data.data;
-      } catch (e) {
-        console.error('Failed to load user data:', e);
-      }
-    },
-
     async loadUsers() {
       try {
         const res = await axios.get('/api/users');
@@ -311,43 +234,6 @@ export default {
           icon: 'error',
           title: 'Load Failed',
           text: 'Failed to load users'
-        });
-      }
-    },
-
-    async changePassword() {
-      if (this.passwordForm.new_password !== this.passwordForm.confirm_password) {
-        Swal.fire({
-          icon: 'error',
-          title: 'Password Mismatch',
-          text: 'New password and confirm password do not match'
-        });
-        return;
-      }
-
-      try {
-        await axios.post('/api/auth/change-password', {
-          current_password: this.passwordForm.current_password,
-          new_password: this.passwordForm.new_password
-        });
-
-        Swal.fire({
-          icon: 'success',
-          title: 'Password Changed',
-          text: 'Your password has been updated successfully'
-        });
-
-        this.passwordForm = {
-          current_password: '',
-          new_password: '',
-          confirm_password: ''
-        };
-      } catch (e) {
-        console.error('Failed to change password:', e);
-        Swal.fire({
-          icon: 'error',
-          title: 'Change Failed',
-          text: (e.response && e.response.data && e.response.data.message) || 'Failed to change password'
         });
       }
     },

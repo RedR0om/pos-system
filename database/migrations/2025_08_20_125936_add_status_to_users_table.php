@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddRoleAndStatusToUsersTable extends Migration
+class AddStatusToUsersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,6 @@ class AddRoleAndStatusToUsersTable extends Migration
     public function up()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->enum('role', ['admin', 'cashier'])->default('cashier')->after('password');
             $table->enum('status', ['active', 'inactive'])->default('active')->after('role');
         });
     }
@@ -27,7 +26,7 @@ class AddRoleAndStatusToUsersTable extends Migration
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn(['role', 'status']);
+            $table->dropColumn('status');
         });
     }
 }
