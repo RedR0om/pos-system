@@ -1,5 +1,13 @@
 <template>
   <b-container fluid>
+    <!-- Loading Overlay -->
+    <div v-if="loading" class="loading-overlay">
+      <div class="loading-content">
+        <b-spinner variant="primary" label="Loading..."></b-spinner>
+        <div class="mt-2">Loading dashboard data...</div>
+      </div>
+    </div>
+
     <b-row>
       <b-col md="4">
         <b-card class="mb-3" body-class="py-3">
@@ -83,6 +91,7 @@ export default {
   name: 'Dashboard',
   data() {
     return {
+      loading: true,
       summary: { total: 0, count: 0, subtotal: 0 },
       charts: { bar: null, pie: null },
       extra: { 
@@ -111,8 +120,11 @@ export default {
       console.error('Failed to load sales summary:', e);
       this.summary = { total: 0, count: 0, subtotal: 0 };
     }
-    this.loadCharts()
-    this.loadSummary()
+    await Promise.all([
+      this.loadCharts(),
+      this.loadSummary()
+    ]);
+    this.loading = false;
   },
   beforeDestroy() {
     // Clean up charts to prevent memory leaks
@@ -201,5 +213,28 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.loading-content {
+  text-align: center;
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+</style>
 
 

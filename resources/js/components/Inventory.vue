@@ -1,5 +1,13 @@
 <template>
   <b-container fluid>
+    <!-- Loading Overlay -->
+    <div v-if="loading" class="loading-overlay">
+      <div class="loading-content">
+        <b-spinner variant="primary" label="Loading..."></b-spinner>
+        <div class="mt-2">Loading inventory data...</div>
+      </div>
+    </div>
+
     <b-row class="mb-3 align-items-center">
       <b-col><h2 class="mb-0">Inventory Management</h2></b-col>
       <b-col cols="auto">
@@ -76,7 +84,7 @@
       </b-col>
       <b-col md="3">
         <b-card class="text-center" bg-variant="info" text-variant="white">
-          <h4>{{ summary.stock_value || '₱0.00' }}</h4>
+          <h4>₱{{ summary.stock_value || '0.00' }}</h4>
           <small>Stock Value</small>
         </b-card>
       </b-col>
@@ -140,7 +148,14 @@
     <!-- Inventory Movements Table -->
     <b-card>
       <h5 class="card-title">Inventory Movements</h5>
+      
+      <div v-if="loading" class="text-center py-5">
+        <b-spinner variant="primary" label="Loading..."></b-spinner>
+        <div class="mt-2">Loading movements...</div>
+      </div>
+      
       <b-table 
+        v-else
         small 
         hover 
         :items="movements.data" 
@@ -306,6 +321,7 @@ export default {
   name: 'Inventory',
   data() {
     return {
+      loading: true,
       movements: { data: [], total: 0, per_page: 25, current_page: 1, last_page: 1, from: 0, to: 0 },
       currentPage: 1,
       summary: {},
@@ -355,11 +371,14 @@ export default {
       }
     }
   },
-  created() { 
+  async created() { 
     this.setDefaultDates();
-    this.load(1);
-    this.loadProducts();
-    this.loadSummary();
+    await Promise.all([
+      this.load(1),
+      this.loadProducts(),
+      this.loadSummary()
+    ]);
+    this.loading = false;
   },
   methods: {
     setDefaultDates() {
@@ -393,6 +412,7 @@ export default {
       }
     },
     async load(page = 1) {
+      this.loading = true;
       this.currentPage = page;
       try {
         const params = { page: page };
@@ -409,6 +429,8 @@ export default {
           title: 'Load Failed', 
           text: 'Failed to load inventory movements' 
         });
+      } finally {
+        this.loading = false;
       }
     },
     async adjust() {
@@ -546,5 +568,28 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.loading-content {
+  text-align: center;
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+</style>
 
 

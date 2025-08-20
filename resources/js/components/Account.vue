@@ -1,5 +1,13 @@
 <template>
   <b-container fluid>
+    <!-- Loading Overlay -->
+    <div v-if="loading" class="loading-overlay">
+      <div class="loading-content">
+        <b-spinner variant="primary" label="Loading..."></b-spinner>
+        <div class="mt-2">Loading users...</div>
+      </div>
+    </div>
+
     <b-row class="mb-3 align-items-center">
       <b-col><h2 class="mb-0">User Management</h2></b-col>
       <b-col cols="auto" v-if="isAdmin">
@@ -16,7 +24,14 @@
     <!-- User Management (Admin Only) -->
     <b-card v-if="isAdmin">
       <h5 class="card-title">All Users</h5>
+      
+      <div v-if="loading" class="text-center py-5">
+        <b-spinner variant="primary" label="Loading..."></b-spinner>
+        <div class="mt-2">Loading users...</div>
+      </div>
+      
       <b-table 
+        v-else
         small 
         hover 
         :items="users" 
@@ -181,6 +196,7 @@ export default {
   name: 'Account',
   data() {
     return {
+      loading: true,
       users: [],
       userForm: {
         id: null,
@@ -235,6 +251,8 @@ export default {
           title: 'Load Failed',
           text: 'Failed to load users'
         });
+      } finally {
+        this.loading = false;
       }
     },
 
@@ -397,6 +415,27 @@ export default {
 
 .text-muted {
   color: #6b7280 !important;
+}
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.loading-content {
+  text-align: center;
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 </style>
 

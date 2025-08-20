@@ -1,5 +1,13 @@
 <template>
   <b-container fluid>
+    <!-- Loading Overlay -->
+    <div v-if="loading" class="loading-overlay">
+      <div class="loading-content">
+        <b-spinner variant="primary" label="Loading..."></b-spinner>
+        <div class="mt-2">Loading products...</div>
+      </div>
+    </div>
+
     <b-row class="mb-3 align-items-center">
       <b-col><h2 class="mb-0">Products</h2></b-col>
       <b-col cols="auto">
@@ -88,7 +96,12 @@
     </b-modal>
 
     <b-card>
-      <b-table small hover :items="products.data" :fields="fields" responsive="sm">
+      <div v-if="loading" class="text-center py-5">
+        <b-spinner variant="primary" label="Loading..."></b-spinner>
+        <div class="mt-2">Loading products...</div>
+      </div>
+      
+      <b-table v-else small hover :items="products.data" :fields="fields" responsive="sm">
         <template #cell(price)="{ item }">{{ Number(item.price).toFixed(2) }}</template>
         <template #cell(actions)="{ item }">
           <b-button size="sm" variant="outline-primary" class="me-1" @click="edit(item)">Edit</b-button>
@@ -164,17 +177,19 @@ export default {
         ];
       } catch (_) {}
     },
-    load(page = 1) {
+    async load(page = 1) {
+      this.loading = true;
       this.currentPage = page;
-      axios.get('/api/products?page=' + page)
-        .then(res => {
-          this.products = res.data;
-        })
-        .catch(e => {
-          console.error(e);
-          const msg = (e.response && (e.response.data.message || JSON.stringify(e.response.data))) || e.message;
-          alert('Failed to load products: ' + msg);
-        });
+      try {
+        const res = await axios.get('/api/products?page=' + page);
+        this.products = res.data;
+      } catch (e) {
+        console.error(e);
+        const msg = (e.response && (e.response.data.message || JSON.stringify(e.response.data))) || e.message;
+        Swal.fire({ icon: 'error', title: 'Load Failed', text: 'Failed to load products: ' + msg });
+      } finally {
+        this.loading = false;
+      }
     },
     edit(p) {
       this.form = { id: p.id, sku: p.sku, name: p.name, category_id: p.category_id || null, price: Number(p.price), stock: p.stock || 0, description: p.description || '', image_file: null };
@@ -296,5 +311,28 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.loading-content {
+  text-align: center;
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+</style>
 
 

@@ -1,10 +1,23 @@
 <template>
   <b-container fluid>
+    <!-- Loading Overlay -->
+    <div v-if="loading" class="loading-overlay">
+      <div class="loading-content">
+        <b-spinner variant="primary" label="Loading..."></b-spinner>
+        <div class="mt-2">Loading sales history...</div>
+      </div>
+    </div>
+
     <div class="d-flex align-items-center justify-content-between mb-3">
       <h2 class="mb-0">Sales History</h2>
     </div>
     <b-card>
-      <b-table small hover :items="sales.data" :fields="fields" responsive>
+      <div v-if="loading" class="text-center py-5">
+        <b-spinner variant="primary" label="Loading..."></b-spinner>
+        <div class="mt-2">Loading sales history...</div>
+      </div>
+      
+      <b-table v-else small hover :items="sales.data" :fields="fields" responsive>
         <template #cell(paid_at)="{ item }">{{ formatDate(item.paid_at) }}</template>
         <template #cell(total)="{ item }">{{ Number(item.total).toFixed(2) }}</template>
         <template #cell(actions)="{ item }">
@@ -41,6 +54,7 @@ export default {
   name: 'Sales',
   data() {
     return {
+      loading: true,
       sales: { data: [], total: 0, per_page: 20 },
       currentPage: 1,
       fields: [
@@ -60,9 +74,16 @@ export default {
   },
   methods: {
     async load(page = 1) {
-      this.currentPage = page
-      const res = await axios.get('/api/sales', { params: { page } })
-      this.sales = res.data
+      this.loading = true;
+      try {
+        this.currentPage = page
+        const res = await axios.get('/api/sales', { params: { page } })
+        this.sales = res.data
+      } catch (e) {
+        console.error('Failed to load sales:', e);
+      } finally {
+        this.loading = false;
+      }
     },
     viewReceipt(sale) {
       this.receiptHtml = this.buildReceiptFromSale(sale)
@@ -121,5 +142,28 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.loading-content {
+  text-align: center;
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+</style>
 
 

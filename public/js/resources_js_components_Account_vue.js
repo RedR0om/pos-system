@@ -25,6 +25,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
   name: 'Account',
   data: function data() {
     return {
+      loading: true,
       users: [],
       userForm: {
         id: null,
@@ -113,9 +114,13 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
                 text: 'Failed to load users'
               });
             case 3:
+              _context.p = 3;
+              _this.loading = false;
+              return _context.f(3);
+            case 4:
               return _context.a(2);
           }
-        }, _callee, null, [[0, 2]]);
+        }, _callee, null, [[0, 2, 3, 4]]);
       }))();
     },
     openCreateModal: function openCreateModal() {
@@ -333,7 +338,18 @@ var render = function render() {
     attrs: {
       fluid: ""
     }
-  }, [_c("b-row", {
+  }, [_vm.loading ? _c("div", {
+    staticClass: "loading-overlay"
+  }, [_c("div", {
+    staticClass: "loading-content"
+  }, [_c("b-spinner", {
+    attrs: {
+      variant: "primary",
+      label: "Loading..."
+    }
+  }), _vm._v(" "), _c("div", {
+    staticClass: "mt-2"
+  }, [_vm._v("Loading users...")])], 1)]) : _vm._e(), _vm._v(" "), _c("b-row", {
     staticClass: "mb-3 align-items-center"
   }, [_c("b-col", [_c("h2", {
     staticClass: "mb-0"
@@ -352,7 +368,16 @@ var render = function render() {
     staticClass: "fas fa-plus"
   }), _vm._v(" Create User\n      ")])], 1) : _vm._e()], 1), _vm._v(" "), _vm.isAdmin ? _c("b-card", [_c("h5", {
     staticClass: "card-title"
-  }, [_vm._v("All Users")]), _vm._v(" "), _c("b-table", {
+  }, [_vm._v("All Users")]), _vm._v(" "), _vm.loading ? _c("div", {
+    staticClass: "text-center py-5"
+  }, [_c("b-spinner", {
+    attrs: {
+      variant: "primary",
+      label: "Loading..."
+    }
+  }), _vm._v(" "), _c("div", {
+    staticClass: "mt-2"
+  }, [_vm._v("Loading users...")])], 1) : _c("b-table", {
     attrs: {
       small: "",
       hover: "",
@@ -642,7 +667,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.card-title[data-v-0b1dd512] {\r\n  color: #374151;\r\n  font-weight: 600;\r\n  margin-bottom: 1rem;\n}\n.text-muted[data-v-0b1dd512] {\r\n  color: #6b7280 !important;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.card-title[data-v-0b1dd512] {\r\n  color: #374151;\r\n  font-weight: 600;\r\n  margin-bottom: 1rem;\n}\n.text-muted[data-v-0b1dd512] {\r\n  color: #6b7280 !important;\n}\n.loading-overlay[data-v-0b1dd512] {\r\n  position: fixed;\r\n  top: 0;\r\n  left: 0;\r\n  right: 0;\r\n  bottom: 0;\r\n  background: rgba(255, 255, 255, 0.9);\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: center;\r\n  z-index: 9999;\n}\n.loading-content[data-v-0b1dd512] {\r\n  text-align: center;\r\n  background: white;\r\n  padding: 2rem;\r\n  border-radius: 8px;\r\n  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
