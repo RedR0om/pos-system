@@ -36,19 +36,17 @@
                 <div class="product-image-container">
                   <b-img :src="p.image_url || placeholder" alt="" class="product-thumb" fluid />
                 </div>
-                <div class="product-info">
-                  <b-row>
-                    <b-col>
-                      <div class="product-title text-truncate" :title="p.name">{{ p.name }}</div>
-                      <div class="product-price">₱{{ Number(p.price).toFixed(2) }}</div>
-                    </b-col>
-                    <b-col>
-                      <b-button size="sm" variant="primary" class="add-btn" @click="addProduct(p)">
-                        <i class="fas fa-plus"></i>
-                      </b-button>
-                    </b-col>
-                  </b-row>
-                </div>
+                                 <div class="product-info">
+                   <div class="product-header">
+                     <div class="product-title text-truncate" :title="p.name">{{ p.name }}</div>
+                     <div class="product-price">₱{{ Number(p.price).toFixed(2) }}</div>
+                   </div>
+                   <div class="product-actions">
+                     <b-button size="sm" variant="primary" class="add-btn" @click="addProduct(p)">
+                       <i class="fas fa-plus"></i>
+                     </b-button>
+                   </div>
+                 </div>
               </b-card>
             </b-col>
           </b-row>
@@ -558,7 +556,7 @@ export default {
   position: relative; 
   width: 100%; 
   height: 180px; 
-  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  background: #f8fafc;
   padding: 12px;
   display: flex;
   align-items: center;
@@ -573,32 +571,44 @@ export default {
 }
 
 .product-info { 
-  background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
-  color: #fff;
+  background: #fff;
+  color: #333;
   padding: 16px;
   position: relative;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 80px;
+}
+
+.product-header {
+  flex: 1;
 }
 
 .product-title { 
   font-weight: 600; 
   font-size: 1rem; 
   margin-bottom: 8px;
-  color: #f9fafb;
+  color: #374151;
   line-height: 1.3;
 }
 
 .product-price { 
   font-size: 1.25rem; 
-  font-weight: bold; 
-  margin-bottom: 12px;
+  font-weight: bold;
   color: #10b981;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.product-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
 }
 
 .add-btn { 
   background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
   border: none;
-  color: #fff;
   color: #fff;
   padding: 8px 16px;
   border-radius: 8px;
