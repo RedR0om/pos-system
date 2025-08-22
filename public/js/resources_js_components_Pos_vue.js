@@ -28,7 +28,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       products: [],
       cart: [],
       payment: {
-        method: 'mobile',
+        method: 'cash',
         amount: 0
       },
       placeholder: '/images/placeholder.svg',
@@ -95,6 +95,9 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
   methods: {
     openQRModal: function openQRModal() {
       this.showQRModal = true;
+    },
+    setExactAmount: function setExactAmount() {
+      this.payment.amount = this.total;
     },
     loadProducts: function loadProducts() {
       var _this = this;
@@ -201,7 +204,7 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
               });
               _this2.cart = [];
               _this2.payment = {
-                method: 'mobile',
+                method: 'cash',
                 amount: 0
               };
               _this2.loadProducts();
@@ -550,7 +553,16 @@ var render = function render() {
       },
       expression: "payment.amount"
     }
-  })], 1), _vm._v(" "), _vm.amountState === false ? _c("b-form-invalid-feedback", [_vm._v("\n              Amount must be at least " + _vm._s(_vm.total.toFixed(2)) + "\n            ")]) : _vm._e()], 1), _vm._v(" "), _vm.payment.method === "cash" && _vm.payment.amount > _vm.total && _vm.total > 0 ? _c("div", {
+  }), _vm._v(" "), _c("b-input-group-append", [_c("b-button", {
+    attrs: {
+      variant: "outline-secondary",
+      size: "sm",
+      disabled: !_vm.cart.length || _vm.isCheckoutLoading
+    },
+    on: {
+      click: _vm.setExactAmount
+    }
+  }, [_vm._v("\n                  Exact\n                ")])], 1)], 1), _vm._v(" "), _vm.amountState === false ? _c("b-form-invalid-feedback", [_vm._v("\n              Amount must be at least " + _vm._s(_vm.total.toFixed(2)) + "\n            ")]) : _vm._e()], 1), _vm._v(" "), _vm.payment.method === "cash" && _vm.payment.amount > _vm.total && _vm.total > 0 ? _c("div", {
     staticClass: "change-display mb-3"
   }, [_c("div", {
     staticClass: "d-flex justify-content-between align-items-center p-3 bg-light rounded"

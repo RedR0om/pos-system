@@ -121,6 +121,16 @@
                   :state="amountState"
                   :disabled="isCheckoutLoading"
                 />
+                <b-input-group-append>
+                  <b-button 
+                    variant="outline-secondary" 
+                    size="sm"
+                    @click="setExactAmount"
+                    :disabled="!cart.length || isCheckoutLoading"
+                  >
+                    Exact
+                  </b-button>
+                </b-input-group-append>
               </b-input-group>
               <b-form-invalid-feedback v-if="amountState === false">
                 Amount must be at least {{ total.toFixed(2) }}
@@ -188,7 +198,7 @@ export default {
     return {
       products: [],
       cart: [],
-      payment: { method: 'mobile', amount: 0 },
+      payment: { method: 'cash', amount: 0 },
       placeholder: '/images/placeholder.svg',
       isLoading: true,
       isCheckoutLoading: false,
@@ -230,6 +240,9 @@ export default {
   methods: {
     openQRModal() {
       this.showQRModal = true;
+    },
+    setExactAmount() {
+      this.payment.amount = this.total;
     },
     async loadProducts() {
       this.isLoading = true;
@@ -280,7 +293,7 @@ export default {
         this.downloadWordDoc(receiptHtml, `receipt-${sale.id || Date.now()}.doc`);
         Swal.fire({ icon: 'success', title: 'Sale completed', timer: 1200, showConfirmButton: false });
         this.cart = []; 
-        this.payment = { method: 'mobile', amount: 0 };
+        this.payment = { method: 'cash', amount: 0 };
         this.loadProducts();
       } catch (e) {
         const msg = (e.response && (e.response.data && (e.response.data.message || JSON.stringify(e.response.data)))) || e.message;
