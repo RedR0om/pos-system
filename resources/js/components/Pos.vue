@@ -29,28 +29,30 @@
         </div>
         
         <!-- Products when loaded -->
-        <b-row v-else>
-          <b-col sm="6" md="3" v-for="p in products" :key="p.id" class="mb-3">
-            <b-card class="product-card h-100" no-body>
-              <div class="product-image-container">
-                <b-img :src="p.image_url || placeholder" alt="" class="product-thumb" fluid />
-              </div>
-              <div class="product-info">
-                <b-row>
-                  <b-col>
-                    <div class="product-title text-truncate" :title="p.name">{{ p.name }}</div>
-                    <div class="product-price">₱{{ Number(p.price).toFixed(2) }}</div>
-                  </b-col>
-                  <b-col>
-                    <b-button size="sm" variant="primary" class="add-btn" @click="addProduct(p)">
-                      <i class="fas fa-plus"></i>
-                    </b-button>
-                  </b-col>
-                </b-row>
-              </div>
-            </b-card>
-          </b-col>
-        </b-row>
+        <div v-else class="products-container">
+          <b-row>
+            <b-col sm="6" md="3" v-for="p in products" :key="p.id" class="mb-3">
+              <b-card class="product-card h-100" no-body>
+                <div class="product-image-container">
+                  <b-img :src="p.image_url || placeholder" alt="" class="product-thumb" fluid />
+                </div>
+                <div class="product-info">
+                  <b-row>
+                    <b-col>
+                      <div class="product-title text-truncate" :title="p.name">{{ p.name }}</div>
+                      <div class="product-price">₱{{ Number(p.price).toFixed(2) }}</div>
+                    </b-col>
+                    <b-col>
+                      <b-button size="sm" variant="primary" class="add-btn" @click="addProduct(p)">
+                        <i class="fas fa-plus"></i>
+                      </b-button>
+                    </b-col>
+                  </b-row>
+                </div>
+              </b-card>
+            </b-col>
+          </b-row>
+        </div>
       </b-col>
       <b-col lg="4">
         <b-card>
@@ -400,6 +402,30 @@ export default {
 
 .loading-skeleton {
   width: 100%;
+}
+
+.products-container {
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+.products-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.products-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.products-container::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.products-container::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
 }
 
 .skeleton-card {

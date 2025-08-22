@@ -8,213 +8,215 @@
       </div>
     </div>
 
-    <b-row class="mb-3 align-items-center">
-      <b-col><h2 class="mb-0">Inventory Management</h2></b-col>
-      <b-col cols="auto">
-                 <b-button variant="success" @click="openExportModal">
-           <i class="fas fa-file-csv"></i> Export to CSV
-         </b-button>
-      </b-col>
-    </b-row>
-
-    <!-- Date Filters -->
-    <b-card class="mb-3">
-      <b-row>
-        <h6 class="card-title">Filter Movements</h6>
+    <div class="page-content">
+      <b-row class="mb-3 align-items-center">
+        <b-col><h2 class="mb-0">Inventory Management</h2></b-col>
+        <b-col cols="auto">
+                   <b-button variant="success" @click="openExportModal">
+             <i class="fas fa-file-csv"></i> Export to CSV
+           </b-button>
+        </b-col>
       </b-row>
-      <br>
-      <b-form @submit.prevent="applyFilters">
-        <b-row class="g-3">
-          <b-col sm="3">
-            <b-form-group label="From Date">
-              <b-form-input 
-                v-model="filters.from_date" 
-                type="date" 
-                placeholder="Start date"
-              />
-            </b-form-group>
-          </b-col>
-          <b-col sm="3">
-            <b-form-group label="To Date">
-              <b-form-input 
-                v-model="filters.to_date" 
-                type="date" 
-                placeholder="End date"
-              />
-            </b-form-group>
-          </b-col>
-          <b-col sm="3">
-            <b-form-group label="Type">
-              <b-form-select 
-                v-model="filters.type" 
-                :options="filterTypeOptions"
-                placeholder="All Types"
-              />
-            </b-form-group>
-          </b-col>
-          <b-col sm="3" class="d-flex align-items-end" style="margin-bottom: 16px;">
-            <div class="d-flex gap-2">
-              <b-button type="submit" variant="primary">Apply Filters</b-button>
-              <b-button variant="outline-secondary" @click="clearFilters">Clear</b-button>
-            </div>
-          </b-col>
+
+      <!-- Date Filters -->
+      <b-card class="mb-3">
+        <b-row>
+          <h6 class="card-title">Filter Movements</h6>
         </b-row>
-      </b-form>
-    </b-card>
+        <br>
+        <b-form @submit.prevent="applyFilters">
+          <b-row class="g-3">
+            <b-col sm="3">
+              <b-form-group label="From Date">
+                <b-form-input 
+                  v-model="filters.from_date" 
+                  type="date" 
+                  placeholder="Start date"
+                />
+              </b-form-group>
+            </b-col>
+            <b-col sm="3">
+              <b-form-group label="To Date">
+                <b-form-input 
+                  v-model="filters.to_date" 
+                  type="date" 
+                  placeholder="End date"
+                />
+              </b-form-group>
+            </b-col>
+            <b-col sm="3">
+              <b-form-group label="Type">
+                <b-form-select 
+                  v-model="filters.type" 
+                  :options="filterTypeOptions"
+                  placeholder="All Types"
+                />
+              </b-form-group>
+            </b-col>
+            <b-col sm="3" class="d-flex align-items-end" style="margin-bottom: 16px;">
+              <div class="d-flex gap-2">
+                <b-button type="submit" variant="primary">Apply Filters</b-button>
+                <b-button variant="outline-secondary" @click="clearFilters">Clear</b-button>
+              </div>
+            </b-col>
+          </b-row>
+        </b-form>
+      </b-card>
 
-    <!-- Inventory Summary Cards -->
-    <b-row class="mb-3">
-      <b-col md="3">
-        <b-card class="text-center" bg-variant="primary" text-variant="white">
-          <h4>{{ summary.total_products || 0 }}</h4>
-          <small>Total Products</small>
-        </b-card>
-      </b-col>
-      <b-col md="3">
-        <b-card class="text-center" bg-variant="success" text-variant="white">
-          <h4>{{ summary.stock_on_hand || 0 }}</h4>
-          <small>Total Stock</small>
-        </b-card>
-      </b-col>
-      <b-col md="3">
-        <b-card class="text-center" bg-variant="warning" text-variant="white">
-          <h4>{{ summary.low_stock || 0 }}</h4>
-          <small>Low Stock Items</small>
-        </b-card>
-      </b-col>
-      <b-col md="3">
-        <b-card class="text-center" bg-variant="info" text-variant="white">
-          <h4>₱{{ summary.stock_value || '0.00' }}</h4>
-          <small>Stock Value</small>
-        </b-card>
-      </b-col>
-    </b-row>
-
-    <!-- Inventory Adjustment Form -->
-    <b-card class="mb-3">
-      <b-row>
-        <h5 class="card-title">Adjust Inventory</h5>
+      <!-- Inventory Summary Cards -->
+      <b-row class="mb-3">
+        <b-col md="3">
+          <b-card class="text-center" bg-variant="primary" text-variant="white">
+            <h4>{{ summary.total_products || 0 }}</h4>
+            <small>Total Products</small>
+          </b-card>
+        </b-col>
+        <b-col md="3">
+          <b-card class="text-center" bg-variant="success" text-variant="white">
+            <h4>{{ summary.stock_on_hand || 0 }}</h4>
+            <small>Total Stock</small>
+          </b-card>
+        </b-col>
+        <b-col md="3">
+          <b-card class="text-center" bg-variant="warning" text-variant="white">
+            <h4>{{ summary.low_stock || 0 }}</h4>
+            <small>Low Stock Items</small>
+          </b-card>
+        </b-col>
+        <b-col md="3">
+          <b-card class="text-center" bg-variant="info" text-variant="white">
+            <h4>₱{{ summary.stock_value || '0.00' }}</h4>
+            <small>Stock Value</small>
+          </b-card>
+        </b-col>
       </b-row>
-      <br>
-      <b-form @submit.prevent="adjust">
-        <b-row class="g-3">
-          <b-col sm="4">
-            <b-form-group label="Product">
-              <b-form-select 
-                v-model="form.product_id" 
-                :options="productOptions" 
-                placeholder="Select Product"
-                required
-              />
-            </b-form-group>
-          </b-col>
-          <b-col sm="2">
-            <b-form-group label="Type">
-              <b-form-select 
-                v-model="form.type" 
-                :options="typeOptions" 
-                required
-              />
-            </b-form-group>
-          </b-col>
-          <b-col sm="2">
-            <b-form-group label="Quantity">
-              <b-form-input 
-                v-model.number="form.quantity" 
-                type="number" 
-                min="1" 
-                required 
-              />
-            </b-form-group>
-          </b-col>
-          <b-col sm="3">
-            <b-form-group label="Reason">
-              <b-form-select 
-                v-model="form.reason" 
-                :options="reasonOptions"
-                placeholder="Select Reason"
-              />
-            </b-form-group>
-          </b-col>
-          <b-col sm="1" class="d-flex align-items-end" style="margin-bottom: 16px;">
-            <b-button type="submit" variant="primary" class="w-100">
-              <i class="fas fa-check"></i> Apply
-            </b-button>
-          </b-col>
+
+      <!-- Inventory Adjustment Form -->
+      <b-card class="mb-3">
+        <b-row>
+          <h5 class="card-title">Adjust Inventory</h5>
         </b-row>
-      </b-form>
-    </b-card>
+        <br>
+        <b-form @submit.prevent="adjust">
+          <b-row class="g-3">
+            <b-col sm="4">
+              <b-form-group label="Product">
+                <b-form-select 
+                  v-model="form.product_id" 
+                  :options="productOptions" 
+                  placeholder="Select Product"
+                  required
+                />
+              </b-form-group>
+            </b-col>
+            <b-col sm="2">
+              <b-form-group label="Type">
+                <b-form-select 
+                  v-model="form.type" 
+                  :options="typeOptions" 
+                  required
+                />
+              </b-form-group>
+            </b-col>
+            <b-col sm="2">
+              <b-form-group label="Quantity">
+                <b-form-input 
+                  v-model.number="form.quantity" 
+                  type="number" 
+                  min="1" 
+                  required 
+                />
+              </b-form-group>
+            </b-col>
+            <b-col sm="3">
+              <b-form-group label="Reason">
+                <b-form-select 
+                  v-model="form.reason" 
+                  :options="reasonOptions"
+                  placeholder="Select Reason"
+                />
+              </b-form-group>
+            </b-col>
+            <b-col sm="1" class="d-flex align-items-end" style="margin-bottom: 16px;">
+              <b-button type="submit" variant="primary" class="w-100">
+                <i class="fas fa-check"></i> Apply
+              </b-button>
+            </b-col>
+          </b-row>
+        </b-form>
+      </b-card>
 
-    <!-- Inventory Movements Table -->
-    <b-card>
-      <h5 class="card-title">Inventory Movements</h5>
-      
-      <div v-if="loading" class="text-center py-5">
-        <b-spinner variant="primary" label="Loading..."></b-spinner>
-        <div class="mt-2">Loading movements...</div>
-      </div>
-      
-      <b-table 
-        v-else
-        small 
-        hover 
-        :items="movements.data" 
-        :fields="fields"
-        responsive="sm"
-        striped
-      >
-        <template #cell(product)="{ item }">
-          <div>
-            <strong>{{ (item.product && item.product.name) || 'Unknown Product' }}</strong>
-            <br>
-            <small class="text-muted">SKU: {{ (item.product && item.product.sku) || item.product_id }}</small>
-          </div>
-        </template>
-        <template #cell(type)="{ item }">
-          <b-badge 
-            :variant="item.type === 'in' ? 'success' : 'danger'"
-            :text="item.type === 'in' ? 'In' : 'Out'"
-          />
-        </template>
-        <template #cell(quantity)="{ item }">
-          <span :class="item.type === 'in' ? 'text-success' : 'text-danger'">
-            {{ item.type === 'in' ? '+' : '-' }}{{ item.quantity }}
-          </span>
-        </template>
-        <template #cell(created_at)="{ item }">
-          {{ formatDate(item.created_at) }}
-        </template>
-        <template #cell(actions)="{ item }">
-          <b-button 
-            size="sm" 
-            variant="outline-secondary" 
-            @click="viewDetails(item)"
-          >
-            Details
-          </b-button>
-        </template>
-      </b-table>
-
-      <!-- Pagination -->
-      <div class="d-flex justify-content-between align-items-center mt-3">
-        <div class="text-muted">
-          Showing {{ movements.from || 0 }} to {{ movements.to || 0 }} of {{ movements.total || 0 }} movements
+      <!-- Inventory Movements Table -->
+      <b-card>
+        <h5 class="card-title">Inventory Movements</h5>
+        
+        <div v-if="loading" class="text-center py-5">
+          <b-spinner variant="primary" label="Loading..."></b-spinner>
+          <div class="mt-2">Loading movements...</div>
         </div>
-                 <b-pagination
-           v-model="currentPage"
-           :total-rows="movements.total || 0"
-           :per-page="movements.per_page || 25"
-           :page="currentPage"
-           @change="load"
-           align="center"
-           size="sm"
-           first-text="«"
-           last-text="»"
-           prev-text="‹"
-           next-text="›"
-         />
-      </div>
-    </b-card>
+        
+        <b-table 
+          v-else
+          small 
+          hover 
+          :items="movements.data" 
+          :fields="fields"
+          responsive="sm"
+          striped
+        >
+          <template #cell(product)="{ item }">
+            <div>
+              <strong>{{ (item.product && item.product.name) || 'Unknown Product' }}</strong>
+              <br>
+              <small class="text-muted">SKU: {{ (item.product && item.product.sku) || item.product_id }}</small>
+            </div>
+          </template>
+          <template #cell(type)="{ item }">
+            <b-badge 
+              :variant="item.type === 'in' ? 'success' : 'danger'"
+              :text="item.type === 'in' ? 'In' : 'Out'"
+            />
+          </template>
+          <template #cell(quantity)="{ item }">
+            <span :class="item.type === 'in' ? 'text-success' : 'text-danger'">
+              {{ item.type === 'in' ? '+' : '-' }}{{ item.quantity }}
+            </span>
+          </template>
+          <template #cell(created_at)="{ item }">
+            {{ formatDate(item.created_at) }}
+          </template>
+          <template #cell(actions)="{ item }">
+            <b-button 
+              size="sm" 
+              variant="outline-secondary" 
+              @click="viewDetails(item)"
+            >
+              Details
+            </b-button>
+          </template>
+        </b-table>
+
+        <!-- Pagination -->
+        <div class="d-flex justify-content-between align-items-center mt-3">
+          <div class="text-muted">
+            Showing {{ movements.from || 0 }} to {{ movements.to || 0 }} of {{ movements.total || 0 }} movements
+          </div>
+                   <b-pagination
+             v-model="currentPage"
+             :total-rows="movements.total || 0"
+             :per-page="movements.per_page || 25"
+             :page="currentPage"
+             @change="load"
+             align="center"
+             size="sm"
+             first-text="«"
+             last-text="»"
+             prev-text="‹"
+             next-text="›"
+           />
+        </div>
+      </b-card>
+    </div>
 
     <!-- Movement Details Modal -->
     <b-modal id="movement-details-modal" title="Movement Details" hide-footer>
@@ -589,6 +591,31 @@ export default {
   padding: 2rem;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Main page scrollable container */
+.page-content {
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+.page-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.page-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.page-content::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.page-content::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
 }
 </style>
 

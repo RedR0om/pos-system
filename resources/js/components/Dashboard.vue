@@ -8,78 +8,80 @@
       </div>
     </div>
 
-    <b-row>
-      <b-col md="4">
-        <b-card class="mb-3" body-class="py-3">
-          <div class="text-muted">Total Sales</div>
-          <div class="display-6">₱{{ Number(summary.total || 0).toFixed(2) }}</div>
-        </b-card>
-      </b-col>
-      <b-col md="4">
-        <b-card class="mb-3" body-class="py-3">
-          <div class="text-muted">Transactions</div>
-          <div class="display-6">{{ summary.count || 0 }}</div>
-        </b-card>
-      </b-col>
-      <b-col md="4">
-        <b-card class="mb-3" body-class="py-3">
-          <div class="text-muted">Today's Sales</div>
-          <div class="display-6">₱{{ Number((extra.sales && extra.sales.today && extra.sales.today.total) || 0).toFixed(2) }}</div>
-        </b-card>
-      </b-col>
-    </b-row>
-    <b-row>
-      <b-col md="8">
-        <b-card title="Sales - Last 7 days">
-          <canvas ref="bar"></canvas>
-        </b-card>
-      </b-col>
-      <b-col md="4">
-        <b-card title="Sales by Category (30d)">
-          <canvas ref="pie"></canvas>
-        </b-card>
-      </b-col>
-    </b-row>
-    <b-row class="mt-3">
-      <b-col md="6">
-        <b-card title="Inventory">
-          <div class="d-flex justify-content-between"><span>Total Products</span><strong>{{ (extra.inventory && extra.inventory.total_products) || 0 }}</strong></div>
-          <div class="d-flex justify-content-between"><span>Low Stock (≤5)</span><strong>{{ (extra.inventory && extra.inventory.low_stock) || 0 }}</strong></div>
-          <div class="d-flex justify-content-between"><span>Categories</span><strong>{{ (extra.inventory && extra.inventory.total_categories) || 0 }}</strong></div>
-          <div class="d-flex justify-content-between"><span>Stock on Hand</span><strong>{{ (extra.inventory && extra.inventory.stock_on_hand) || 0 }}</strong></div>
-          <div class="d-flex justify-content-between"><span>Stock Value</span><strong>₱{{ Number((extra.inventory && extra.inventory.stock_value) || 0).toFixed(2) }}</strong></div>
-          <div class="d-flex justify-content-between"><span>Movements (7d)</span><strong>In: {{ (extra.inventory && extra.inventory.movements_last7 && extra.inventory.movements_last7.in) || 0 }} | Out: {{ (extra.inventory && extra.inventory.movements_last7 && extra.inventory.movements_last7.out) || 0 }}</strong></div>
-        </b-card>
-      </b-col>
-      <b-col md="6">
-        <b-card no-body>
-          <template #header>
-            Recent Sales
-          </template>
-          <b-card-body>
-            <ul class="list-unstyled mb-0">
-              <li v-for="s in (extra.sales && extra.sales.recent) || []" :key="s.id" class="d-flex justify-content-between">
-                <span>{{ firstItemName(s) }}</span>
-                <span>₱{{ Number(s.total || 0).toFixed(2) }} • {{ formatDate(s.created_at) }}</span>
-              </li>
-            </ul>
-          </b-card-body>
-        </b-card>
-        <b-card no-body class="mt-3">
-          <template #header>
-            Top Products (30d)
-          </template>
-          <b-card-body>
-            <ul class="list-unstyled mb-0">
-              <li v-for="p in (extra.sales && extra.sales.top_products) || []" :key="p.name" class="d-flex justify-content-between">
-                <span>{{ p.name }}</span>
-                <span>{{ p.qty || 0 }} pcs • ₱{{ Number(p.total || 0).toFixed(2) }}</span>
-              </li>
-            </ul>
-          </b-card-body>
-        </b-card>
-      </b-col>
-    </b-row>
+    <div class="page-content">
+      <b-row>
+        <b-col md="4">
+          <b-card class="mb-3" body-class="py-3">
+            <div class="text-muted">Total Sales</div>
+            <div class="display-6">₱{{ Number(summary.total || 0).toFixed(2) }}</div>
+          </b-card>
+        </b-col>
+        <b-col md="4">
+          <b-card class="mb-3" body-class="py-3">
+            <div class="text-muted">Transactions</div>
+            <div class="display-6">{{ summary.count || 0 }}</div>
+          </b-card>
+        </b-col>
+        <b-col md="4">
+          <b-card class="mb-3" body-class="py-3">
+            <div class="text-muted">Today's Sales</div>
+            <div class="display-6">₱{{ Number((extra.sales && extra.sales.today && extra.sales.today.total) || 0).toFixed(2) }}</div>
+          </b-card>
+        </b-col>
+      </b-row>
+      <b-row>
+        <b-col md="8">
+          <b-card title="Sales - Last 7 days">
+            <canvas ref="bar"></canvas>
+          </b-card>
+        </b-col>
+        <b-col md="4">
+          <b-card title="Sales by Category (30d)">
+            <canvas ref="pie"></canvas>
+          </b-card>
+        </b-col>
+      </b-row>
+      <b-row class="mt-3">
+        <b-col md="6">
+          <b-card title="Inventory">
+            <div class="d-flex justify-content-between"><span>Total Products</span><strong>{{ (extra.inventory && extra.inventory.total_products) || 0 }}</strong></div>
+            <div class="d-flex justify-content-between"><span>Low Stock (≤5)</span><strong>{{ (extra.inventory && extra.inventory.low_stock) || 0 }}</strong></div>
+            <div class="d-flex justify-content-between"><span>Categories</span><strong>{{ (extra.inventory && extra.inventory.total_categories) || 0 }}</strong></div>
+            <div class="d-flex justify-content-between"><span>Stock on Hand</span><strong>{{ (extra.inventory && extra.inventory.stock_on_hand) || 0 }}</strong></div>
+            <div class="d-flex justify-content-between"><span>Stock Value</span><strong>₱{{ Number((extra.inventory && extra.inventory.stock_value) || 0).toFixed(2) }}</strong></div>
+            <div class="d-flex justify-content-between"><span>Movements (7d)</span><strong>In: {{ (extra.inventory && extra.inventory.movements_last7 && extra.inventory.movements_last7.in) || 0 }} | Out: {{ (extra.inventory && extra.inventory.movements_last7 && extra.inventory.movements_last7.out) || 0 }}</strong></div>
+          </b-card>
+        </b-col>
+        <b-col md="6">
+          <b-card no-body>
+            <template #header>
+              Recent Sales
+            </template>
+            <b-card-body>
+              <ul class="list-unstyled mb-0">
+                <li v-for="s in (extra.sales && extra.sales.recent) || []" :key="s.id" class="d-flex justify-content-between">
+                  <span>{{ firstItemName(s) }}</span>
+                  <span>₱{{ Number(s.total || 0).toFixed(2) }} • {{ formatDate(s.created_at) }}</span>
+                </li>
+              </ul>
+            </b-card-body>
+          </b-card>
+          <b-card no-body class="mt-3">
+            <template #header>
+              Top Products (30d)
+            </template>
+            <b-card-body>
+              <ul class="list-unstyled mb-0">
+                <li v-for="p in (extra.sales && extra.sales.top_products) || []" :key="p.name" class="d-flex justify-content-between">
+                  <span>{{ p.name }}</span>
+                  <span>{{ p.qty || 0 }} pcs • ₱{{ Number(p.total || 0).toFixed(2) }}</span>
+                </li>
+              </ul>
+            </b-card-body>
+          </b-card>
+        </b-col>
+      </b-row>
+    </div>
   </b-container>
 </template>
 
@@ -234,6 +236,31 @@ export default {
   padding: 2rem;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Main page scrollable container */
+.page-content {
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+.page-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.page-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.page-content::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.page-content::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
 }
 </style>
 

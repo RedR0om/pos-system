@@ -876,6 +876,8 @@ var render = function render() {
     attrs: {
       fluid: ""
     }
+  }, [_c("div", {
+    staticClass: "page-content"
   }, [_c("b-row", {
     staticClass: "mb-3 align-items-center"
   }, [_c("b-col", [_c("h2", {
@@ -893,7 +895,7 @@ var render = function render() {
     }
   }, [_c("i", {
     staticClass: "fas fa-download"
-  }), _vm._v(" Export Report\n      ")])], 1)], 1), _vm._v(" "), _c("b-card", {
+  }), _vm._v(" Export Report\n        ")])], 1)], 1), _vm._v(" "), _c("b-card", {
     staticClass: "mb-3"
   }, [_c("b-row", [_c("b-col", [_c("h6", {
     staticClass: "card-title"
@@ -968,7 +970,7 @@ var render = function render() {
     }
   }, [_c("i", {
     staticClass: "fas fa-search"
-  }), _vm._v(" " + _vm._s(_vm.isLoading ? "Loading..." : "Generate Report") + "\n            ")])], 1), _vm._v(" "), _c("b-col", {
+  }), _vm._v(" " + _vm._s(_vm.isLoading ? "Loading..." : "Generate Report") + "\n              ")])], 1), _vm._v(" "), _c("b-col", {
     attrs: {
       sm: "6"
     }
@@ -982,7 +984,7 @@ var render = function render() {
     }
   }, [_c("i", {
     staticClass: "fas fa-times"
-  }), _vm._v(" Clear\n              ")])], 1)], 1)])], 1)], 1)], 1), _vm._v(" "), _vm.isLoading ? _c("div", {
+  }), _vm._v(" Clear\n                ")])], 1)], 1)])], 1)], 1)], 1), _vm._v(" "), _vm.isLoading ? _c("div", {
     staticClass: "text-center py-5"
   }, [_c("div", {
     staticClass: "spinner-border text-primary",
@@ -1088,9 +1090,9 @@ var render = function render() {
       key: "cell(revenue)",
       fn: function fn(_ref2) {
         var item = _ref2.item;
-        return [_vm._v("\n              ₱" + _vm._s((item.revenue || 0).toFixed(2)) + "\n            ")];
+        return [_vm._v("\n                ₱" + _vm._s((item.revenue || 0).toFixed(2)) + "\n              ")];
       }
-    }], null, false, 1428596972)
+    }], null, false, 2233617772)
   })], 1)], 1), _vm._v(" "), _c("b-col", {
     attrs: {
       md: "6"
@@ -1110,13 +1112,13 @@ var render = function render() {
       key: "cell(total_amount)",
       fn: function fn(_ref3) {
         var item = _ref3.item;
-        return [_vm._v("\n              ₱" + _vm._s((item.total || 0).toFixed(2)) + "\n            ")];
+        return [_vm._v("\n                ₱" + _vm._s((item.total || 0).toFixed(2)) + "\n              ")];
       }
     }, {
       key: "cell(created_at)",
       fn: function fn(_ref4) {
         var item = _ref4.item;
-        return [_vm._v("\n              " + _vm._s(_vm.formatDate(item.created_at)) + "\n            ")];
+        return [_vm._v("\n                " + _vm._s(_vm.formatDate(item.created_at)) + "\n              ")];
       }
     }, {
       key: "cell(actions)",
@@ -1136,7 +1138,7 @@ var render = function render() {
           staticClass: "fas fa-eye"
         })])];
       }
-    }], null, false, 471893816)
+    }], null, false, 1347900344)
   })], 1)], 1)], 1), _vm._v(" "), _c("b-card", [_c("h5", {
     staticClass: "card-title"
   }, [_vm._v("Detailed Sales Report")]), _vm._v(" "), _c("b-table", {
@@ -1153,13 +1155,13 @@ var render = function render() {
       key: "cell(total_amount)",
       fn: function fn(_ref6) {
         var item = _ref6.item;
-        return [_vm._v("\n          ₱" + _vm._s((item.total || 0).toFixed(2)) + "\n        ")];
+        return [_vm._v("\n            ₱" + _vm._s((item.total || 0).toFixed(2)) + "\n          ")];
       }
     }, {
       key: "cell(created_at)",
       fn: function fn(_ref7) {
         var item = _ref7.item;
-        return [_vm._v("\n          " + _vm._s(_vm.formatDate(item.created_at)) + "\n        ")];
+        return [_vm._v("\n            " + _vm._s(_vm.formatDate(item.created_at)) + "\n          ")];
       }
     }, {
       key: "cell(actions)",
@@ -1203,12 +1205,12 @@ var render = function render() {
         }), _vm._v(" "), _c("p", [_vm._v("No sales data found for the selected period")])])];
       },
       proxy: true
-    }], null, false, 421578499)
+    }], null, false, 1921707139)
   }), _vm._v(" "), _c("div", {
     staticClass: "d-flex justify-content-between align-items-center mt-3"
   }, [_c("div", {
     staticClass: "text-muted"
-  }, [_vm._v("\n          Showing " + _vm._s(_vm.sales.from || 0) + " to " + _vm._s(_vm.sales.to || 0) + " of " + _vm._s(_vm.sales.total || 0) + " sales\n        ")]), _vm._v(" "), _c("b-pagination", {
+  }, [_vm._v("\n            Showing " + _vm._s(_vm.sales.from || 0) + " to " + _vm._s(_vm.sales.to || 0) + " of " + _vm._s(_vm.sales.total || 0) + " sales\n          ")]), _vm._v(" "), _c("b-pagination", {
     attrs: {
       "total-rows": _vm.sales.total || 0,
       "per-page": _vm.sales.per_page || 15,
@@ -1230,7 +1232,7 @@ var render = function render() {
       },
       expression: "currentPage"
     }
-  })], 1)], 1)], 1) : _vm._e(), _vm._v(" "), _c("b-modal", {
+  })], 1)], 1)], 1) : _vm._e()], 1), _vm._v(" "), _c("b-modal", {
     attrs: {
       id: "sale-details-modal",
       title: "Sale Details",
@@ -15010,7 +15012,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.card-title[data-v-6c52f8b8] {\r\n  color: #374151;\r\n  font-weight: 600;\r\n  margin-bottom: 1rem;\n}\n.text-muted[data-v-6c52f8b8] {\r\n  color: #6b7280 !important;\n}\n.h3[data-v-6c52f8b8], .h4[data-v-6c52f8b8], .display-6[data-v-6c52f8b8] {\r\n  color: #111827;\r\n  font-weight: 700;\n}\r\n\r\n/* Control pie chart size specifically - target the exact chart */\ncanvas[ref=\"salesByCategoryChart\"][data-v-6c52f8b8] {\r\n  max-height: 80px !important;\r\n  height: 80px !important;\r\n  width: 100% !important;\n}\r\n\r\n/* Keep bar chart at current size */\ncanvas[ref=\"salesByDayChart\"][data-v-6c52f8b8] {\r\n  height: auto !important;\r\n  max-height: none !important;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.card-title[data-v-6c52f8b8] {\r\n  color: #374151;\r\n  font-weight: 600;\r\n  margin-bottom: 1rem;\n}\n.text-muted[data-v-6c52f8b8] {\r\n  color: #6b7280 !important;\n}\n.h3[data-v-6c52f8b8], .h4[data-v-6c52f8b8], .display-6[data-v-6c52f8b8] {\r\n  color: #111827;\r\n  font-weight: 700;\n}\r\n\r\n/* Control pie chart size specifically - target the exact chart */\ncanvas[ref=\"salesByCategoryChart\"][data-v-6c52f8b8] {\r\n  max-height: 80px !important;\r\n  height: 80px !important;\r\n  width: 100% !important;\n}\r\n\r\n/* Keep bar chart at current size */\ncanvas[ref=\"salesByDayChart\"][data-v-6c52f8b8] {\r\n  height: auto !important;\r\n  max-height: none !important;\n}\r\n\r\n/* Main page scrollable container */\n.page-content[data-v-6c52f8b8] {\r\n  max-height: calc(100vh - 100px);\r\n  overflow-y: auto;\r\n  padding-right: 10px;\n}\n.page-content[data-v-6c52f8b8]::-webkit-scrollbar {\r\n  width: 8px;\n}\n.page-content[data-v-6c52f8b8]::-webkit-scrollbar-track {\r\n  background: #f1f1f1;\r\n  border-radius: 4px;\n}\n.page-content[data-v-6c52f8b8]::-webkit-scrollbar-thumb {\r\n  background: #c1c1c1;\r\n  border-radius: 4px;\n}\n.page-content[data-v-6c52f8b8]::-webkit-scrollbar-thumb:hover {\r\n  background: #a8a8a8;\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

@@ -1,151 +1,185 @@
 <template>
   <b-container fluid>
-    <b-row class="mb-3 align-items-center">
-      <b-col><h2 class="mb-0">Sales Reports</h2></b-col>
-      <b-col cols="auto">
-        <b-button variant="success" @click="exportReport">
-          <i class="fas fa-download"></i> Export Report
-        </b-button>
-      </b-col>
-    </b-row>
-
-    <!-- Date Filters -->
-    <b-card class="mb-3">
-      <b-row>
-        <b-col><h6 class="card-title">Filter Reports</h6></b-col>
+    <div class="page-content">
+      <b-row class="mb-3 align-items-center">
+        <b-col><h2 class="mb-0">Sales Reports</h2></b-col>
+        <b-col cols="auto">
+          <b-button variant="success" @click="exportReport">
+            <i class="fas fa-download"></i> Export Report
+          </b-button>
+        </b-col>
       </b-row>
-      <b-form @submit.prevent="handleFilterSubmit">
-        <b-row class="g-3">
-          <b-col sm="3">
-            <b-form-group label="From Date">
-              <b-form-input 
-                v-model="filters.from_date" 
-                type="date" 
-                placeholder="Start date"
-              />
-            </b-form-group>
-          </b-col>
-          <b-col sm="3">
-            <b-form-group label="To Date">
-              <b-form-input 
-                v-model="filters.to_date" 
-                type="date" 
-                placeholder="End date"
-              />
-            </b-form-group>
-          </b-col>
-          <b-col sm="6" class="d-flex align-items-end" style="margin-bottom: 16px;">
-            <div class="d-flex gap-2">
-              <b-col sm="8">
-                <b-button type="submit" variant="primary" :disabled="isLoading">
-                <i class="fas fa-search"></i> {{ isLoading ? 'Loading...' : 'Generate Report' }}
-              </b-button>
-              </b-col>
-              <b-col sm="6">
-                <b-button variant="outline-secondary" @click="clearFilters" :disabled="isLoading">
-                  <i class="fas fa-times"></i> Clear
+
+      <!-- Date Filters -->
+      <b-card class="mb-3">
+        <b-row>
+          <b-col><h6 class="card-title">Filter Reports</h6></b-col>
+        </b-row>
+        <b-form @submit.prevent="handleFilterSubmit">
+          <b-row class="g-3">
+            <b-col sm="3">
+              <b-form-group label="From Date">
+                <b-form-input 
+                  v-model="filters.from_date" 
+                  type="date" 
+                  placeholder="Start date"
+                />
+              </b-form-group>
+            </b-col>
+            <b-col sm="3">
+              <b-form-group label="To Date">
+                <b-form-input 
+                  v-model="filters.to_date" 
+                  type="date" 
+                  placeholder="End date"
+                />
+              </b-form-group>
+            </b-col>
+            <b-col sm="6" class="d-flex align-items-end" style="margin-bottom: 16px;">
+              <div class="d-flex gap-2">
+                <b-col sm="8">
+                  <b-button type="submit" variant="primary" :disabled="isLoading">
+                  <i class="fas fa-search"></i> {{ isLoading ? 'Loading...' : 'Generate Report' }}
                 </b-button>
-              </b-col>
-            </div>
+                </b-col>
+                <b-col sm="6">
+                  <b-button variant="outline-secondary" @click="clearFilters" :disabled="isLoading">
+                    <i class="fas fa-times"></i> Clear
+                  </b-button>
+                </b-col>
+              </div>
+            </b-col>
+          </b-row>
+        </b-form>
+      </b-card>
+
+      <!-- Loading Overlay -->
+      <div v-if="isLoading" class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+          <span class="sr-only">Loading...</span>
+        </div>
+        <p class="mt-2 text-muted">Loading report data...</p>
+      </div>
+
+      <!-- Main Content (hidden when loading) -->
+      <div v-if="!isLoading">
+        <!-- Summary Cards -->
+        <b-row class="mb-3">
+          <b-col md="3">
+            <b-card class="text-center" bg-variant="primary" text-variant="white">
+              <h4>{{ summary.total_sales || 0 }}</h4>
+              <small>Total Sales</small>
+            </b-card>
+          </b-col>
+          <b-col md="3">
+            <b-card class="text-center" bg-variant="success" text-variant="white">
+              <h4>₱{{ (summary.total_revenue || 0).toFixed(2) }}</h4>
+              <small>Total Revenue</small>
+            </b-card>
+          </b-col>
+          <b-col md="3">
+            <b-card class="text-center" bg-variant="info" text-variant="white">
+              <h4>{{ summary.total_items || 0 }}</h4>
+              <small>Items Sold</small>
+            </b-card>
+          </b-col>
+          <b-col md="3">
+            <b-card class="text-center" bg-variant="warning" text-variant="white">
+              <h4>₱{{ (summary.average_sale || 0).toFixed(2) }}</h4>
+              <small>Average Sale</small>
+            </b-card>
           </b-col>
         </b-row>
-      </b-form>
-    </b-card>
 
-    <!-- Loading Overlay -->
-    <div v-if="isLoading" class="text-center py-5">
-      <div class="spinner-border text-primary" role="status">
-        <span class="sr-only">Loading...</span>
-      </div>
-      <p class="mt-2 text-muted">Loading report data...</p>
-    </div>
+        <!-- Charts Row -->
+        <b-row class="mb-3">
+          <b-col md="6">
+            <b-card>
+              <h5 class="card-title">Sales by Day</h5>
+              <canvas ref="salesByDayChart"></canvas>
+            </b-card>
+          </b-col>
+          <b-col md="6">
+            <b-card>
+              <h5 class="card-title">Sales by Category</h5>
+              <canvas ref="salesByCategoryChart" style="max-height: 358px !important; height: 80% !important;"></canvas>
+            </b-card>
+          </b-col>
+        </b-row>
 
-    <!-- Main Content (hidden when loading) -->
-    <div v-if="!isLoading">
-      <!-- Summary Cards -->
-      <b-row class="mb-3">
-        <b-col md="3">
-          <b-card class="text-center" bg-variant="primary" text-variant="white">
-            <h4>{{ summary.total_sales || 0 }}</h4>
-            <small>Total Sales</small>
-          </b-card>
-        </b-col>
-        <b-col md="3">
-          <b-card class="text-center" bg-variant="success" text-variant="white">
-            <h4>₱{{ (summary.total_revenue || 0).toFixed(2) }}</h4>
-            <small>Total Revenue</small>
-          </b-card>
-        </b-col>
-        <b-col md="3">
-          <b-card class="text-center" bg-variant="info" text-variant="white">
-            <h4>{{ summary.total_items || 0 }}</h4>
-            <small>Items Sold</small>
-          </b-card>
-        </b-col>
-        <b-col md="3">
-          <b-card class="text-center" bg-variant="warning" text-variant="white">
-            <h4>₱{{ (summary.average_sale || 0).toFixed(2) }}</h4>
-            <small>Average Sale</small>
-          </b-card>
-        </b-col>
-      </b-row>
+        <!-- Top Products -->
+        <b-row class="mb-3">
+          <b-col md="6">
+            <b-card>
+              <h5 class="card-title">Top Selling Products</h5>
+              <b-table 
+                small 
+                hover 
+                :items="topProducts" 
+                :fields="topProductFields"
+                responsive="sm"
+                striped
+              >
+                <template #cell(quantity)="{ item }">
+                  <b-badge variant="success">{{ item.quantity || 0 }}</b-badge>
+                </template>
+                <template #cell(revenue)="{ item }">
+                  ₱{{ (item.revenue || 0).toFixed(2) }}
+                </template>
+              </b-table>
+            </b-card>
+          </b-col>
+          <b-col md="6">
+            <b-card>
+              <h5 class="card-title">Recent Sales</h5>
+              <b-table 
+                small 
+                hover 
+                :items="recentSales" 
+                :fields="recentSalesFields"
+                responsive="sm"
+                striped
+              >
+                <template #cell(total_amount)="{ item }">
+                  ₱{{ (item.total || 0).toFixed(2) }}
+                </template>
+                <template #cell(created_at)="{ item }">
+                  {{ formatDate(item.created_at) }}
+                </template>
+                <template #cell(actions)="{ item }">
+                  <b-button 
+                    size="sm" 
+                    variant="outline-primary" 
+                    @click="viewSaleDetails(item.id)"
+                  >
+                    <i class="fas fa-eye"></i>
+                  </b-button>
+                </template>
+              </b-table>
+            </b-card>
+          </b-col>
+        </b-row>
 
-      <!-- Charts Row -->
-      <b-row class="mb-3">
-        <b-col md="6">
-          <b-card>
-            <h5 class="card-title">Sales by Day</h5>
-            <canvas ref="salesByDayChart"></canvas>
-          </b-card>
-        </b-col>
-        <b-col md="6">
-          <b-card>
-            <h5 class="card-title">Sales by Category</h5>
-            <canvas ref="salesByCategoryChart" style="max-height: 358px !important; height: 80% !important;"></canvas>
-          </b-card>
-        </b-col>
-      </b-row>
-
-      <!-- Top Products -->
-      <b-row class="mb-3">
-        <b-col md="6">
-          <b-card>
-            <h5 class="card-title">Top Selling Products</h5>
-            <b-table 
-              small 
-              hover 
-              :items="topProducts" 
-              :fields="topProductFields"
-              responsive="sm"
-              striped
-            >
-              <template #cell(quantity)="{ item }">
-                <b-badge variant="success">{{ item.quantity || 0 }}</b-badge>
-              </template>
-              <template #cell(revenue)="{ item }">
-                ₱{{ (item.revenue || 0).toFixed(2) }}
-              </template>
-            </b-table>
-          </b-card>
-        </b-col>
-        <b-col md="6">
-          <b-card>
-            <h5 class="card-title">Recent Sales</h5>
-            <b-table 
-              small 
-              hover 
-              :items="recentSales" 
-              :fields="recentSalesFields"
-              responsive="sm"
-              striped
-            >
-              <template #cell(total_amount)="{ item }">
-                ₱{{ (item.total || 0).toFixed(2) }}
-              </template>
-              <template #cell(created_at)="{ item }">
-                {{ formatDate(item.created_at) }}
-              </template>
-              <template #cell(actions)="{ item }">
+        <!-- Detailed Sales Table -->
+        <b-card>
+          <h5 class="card-title">Detailed Sales Report</h5>
+          <b-table 
+            small 
+            hover 
+            :items="sales.data" 
+            :fields="salesFields"
+            responsive="sm"
+            striped
+            show-empty
+          >
+            <template #cell(total_amount)="{ item }">
+              ₱{{ (item.total || 0).toFixed(2) }}
+            </template>
+            <template #cell(created_at)="{ item }">
+              {{ formatDate(item.created_at) }}
+            </template>
+            <template #cell(actions)="{ item }">
+              <div class="d-flex gap-1">
                 <b-button 
                   size="sm" 
                   variant="outline-primary" 
@@ -153,76 +187,44 @@
                 >
                   <i class="fas fa-eye"></i>
                 </b-button>
-              </template>
-            </b-table>
-          </b-card>
-        </b-col>
-      </b-row>
+                <b-button 
+                  size="sm" 
+                  variant="outline-success" 
+                  @click="printReceipt(item)"
+                >
+                  <i class="fas fa-print"></i>
+                </b-button>
+              </div>
+            </template>
+            <template #empty>
+              <div class="text-center text-muted py-4">
+                <i class="fas fa-chart-line fa-3x mb-3"></i>
+                <p>No sales data found for the selected period</p>
+              </div>
+            </template>
+          </b-table>
 
-      <!-- Detailed Sales Table -->
-      <b-card>
-        <h5 class="card-title">Detailed Sales Report</h5>
-        <b-table 
-          small 
-          hover 
-          :items="sales.data" 
-          :fields="salesFields"
-          responsive="sm"
-          striped
-          show-empty
-        >
-          <template #cell(total_amount)="{ item }">
-            ₱{{ (item.total || 0).toFixed(2) }}
-          </template>
-          <template #cell(created_at)="{ item }">
-            {{ formatDate(item.created_at) }}
-          </template>
-          <template #cell(actions)="{ item }">
-            <div class="d-flex gap-1">
-              <b-button 
-                size="sm" 
-                variant="outline-primary" 
-                @click="viewSaleDetails(item.id)"
-              >
-                <i class="fas fa-eye"></i>
-              </b-button>
-              <b-button 
-                size="sm" 
-                variant="outline-success" 
-                @click="printReceipt(item)"
-              >
-                <i class="fas fa-print"></i>
-              </b-button>
+          <!-- Pagination -->
+          <div class="d-flex justify-content-between align-items-center mt-3">
+            <div class="text-muted">
+              Showing {{ sales.from || 0 }} to {{ sales.to || 0 }} of {{ sales.total || 0 }} sales
             </div>
-          </template>
-          <template #empty>
-            <div class="text-center text-muted py-4">
-              <i class="fas fa-chart-line fa-3x mb-3"></i>
-              <p>No sales data found for the selected period</p>
-            </div>
-          </template>
-        </b-table>
-
-        <!-- Pagination -->
-        <div class="d-flex justify-content-between align-items-center mt-3">
-          <div class="text-muted">
-            Showing {{ sales.from || 0 }} to {{ sales.to || 0 }} of {{ sales.total || 0 }} sales
+            <b-pagination
+              v-model="currentPage"
+              :total-rows="sales.total || 0"
+              :per-page="sales.per_page || 15"
+              :page="currentPage"
+              @change="loadSales"
+              align="center"
+              size="sm"
+              first-text="«"
+              last-text="»"
+              prev-text="‹"
+              next-text="›"
+            />
           </div>
-          <b-pagination
-            v-model="currentPage"
-            :total-rows="sales.total || 0"
-            :per-page="sales.per_page || 15"
-            :page="currentPage"
-            @change="loadSales"
-            align="center"
-            size="sm"
-            first-text="«"
-            last-text="»"
-            prev-text="‹"
-            next-text="›"
-          />
-        </div>
-      </b-card>
+        </b-card>
+      </div>
     </div>
 
     <!-- Sale Details Modal -->
@@ -956,5 +958,30 @@ canvas[ref="salesByCategoryChart"] {
 canvas[ref="salesByDayChart"] {
   height: auto !important;
   max-height: none !important;
+}
+
+/* Main page scrollable container */
+.page-content {
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+.page-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.page-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.page-content::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+.page-content::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
 }
 </style>

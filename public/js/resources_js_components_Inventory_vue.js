@@ -475,7 +475,9 @@ var render = function render() {
     }
   }), _vm._v(" "), _c("div", {
     staticClass: "mt-2"
-  }, [_vm._v("Loading inventory data...")])], 1)]) : _vm._e(), _vm._v(" "), _c("b-row", {
+  }, [_vm._v("Loading inventory data...")])], 1)]) : _vm._e(), _vm._v(" "), _c("div", {
+    staticClass: "page-content"
+  }, [_c("b-row", {
     staticClass: "mb-3 align-items-center"
   }, [_c("b-col", [_c("h2", {
     staticClass: "mb-0"
@@ -492,7 +494,7 @@ var render = function render() {
     }
   }, [_c("i", {
     staticClass: "fas fa-file-csv"
-  }), _vm._v(" Export to CSV\n       ")])], 1)], 1), _vm._v(" "), _c("b-card", {
+  }), _vm._v(" Export to CSV\n         ")])], 1)], 1), _vm._v(" "), _c("b-card", {
     staticClass: "mb-3"
   }, [_c("b-row", [_c("h6", {
     staticClass: "card-title"
@@ -740,7 +742,7 @@ var render = function render() {
     }
   }, [_c("i", {
     staticClass: "fas fa-check"
-  }), _vm._v(" Apply\n          ")])], 1)], 1)], 1)], 1), _vm._v(" "), _c("b-card", [_c("h5", {
+  }), _vm._v(" Apply\n            ")])], 1)], 1)], 1)], 1), _vm._v(" "), _c("b-card", [_c("h5", {
     staticClass: "card-title"
   }, [_vm._v("Inventory Movements")]), _vm._v(" "), _vm.loading ? _c("div", {
     staticClass: "text-center py-5"
@@ -785,13 +787,13 @@ var render = function render() {
         var item = _ref3.item;
         return [_c("span", {
           "class": item.type === "in" ? "text-success" : "text-danger"
-        }, [_vm._v("\n          " + _vm._s(item.type === "in" ? "+" : "-") + _vm._s(item.quantity) + "\n        ")])];
+        }, [_vm._v("\n            " + _vm._s(item.type === "in" ? "+" : "-") + _vm._s(item.quantity) + "\n          ")])];
       }
     }, {
       key: "cell(created_at)",
       fn: function fn(_ref4) {
         var item = _ref4.item;
-        return [_vm._v("\n        " + _vm._s(_vm.formatDate(item.created_at)) + "\n      ")];
+        return [_vm._v("\n          " + _vm._s(_vm.formatDate(item.created_at)) + "\n        ")];
       }
     }, {
       key: "cell(actions)",
@@ -807,14 +809,14 @@ var render = function render() {
               return _vm.viewDetails(item);
             }
           }
-        }, [_vm._v("\n          Details\n        ")])];
+        }, [_vm._v("\n            Details\n          ")])];
       }
     }])
   }), _vm._v(" "), _c("div", {
     staticClass: "d-flex justify-content-between align-items-center mt-3"
   }, [_c("div", {
     staticClass: "text-muted"
-  }, [_vm._v("\n        Showing " + _vm._s(_vm.movements.from || 0) + " to " + _vm._s(_vm.movements.to || 0) + " of " + _vm._s(_vm.movements.total || 0) + " movements\n      ")]), _vm._v(" "), _c("b-pagination", {
+  }, [_vm._v("\n          Showing " + _vm._s(_vm.movements.from || 0) + " to " + _vm._s(_vm.movements.to || 0) + " of " + _vm._s(_vm.movements.total || 0) + " movements\n        ")]), _vm._v(" "), _c("b-pagination", {
     attrs: {
       "total-rows": _vm.movements.total || 0,
       "per-page": _vm.movements.per_page || 25,
@@ -836,7 +838,7 @@ var render = function render() {
       },
       expression: "currentPage"
     }
-  })], 1)], 1), _vm._v(" "), _c("b-modal", {
+  })], 1)], 1)], 1), _vm._v(" "), _c("b-modal", {
     attrs: {
       id: "movement-details-modal",
       title: "Movement Details",
@@ -1003,7 +1005,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.loading-overlay[data-v-5a6294fe] {\r\n  position: fixed;\r\n  top: 0;\r\n  left: 0;\r\n  right: 0;\r\n  bottom: 0;\r\n  background: rgba(255, 255, 255, 0.9);\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: center;\r\n  z-index: 9999;\n}\n.loading-content[data-v-5a6294fe] {\r\n  text-align: center;\r\n  background: white;\r\n  padding: 2rem;\r\n  border-radius: 8px;\r\n  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.loading-overlay[data-v-5a6294fe] {\r\n  position: fixed;\r\n  top: 0;\r\n  left: 0;\r\n  right: 0;\r\n  bottom: 0;\r\n  background: rgba(255, 255, 255, 0.9);\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: center;\r\n  z-index: 9999;\n}\n.loading-content[data-v-5a6294fe] {\r\n  text-align: center;\r\n  background: white;\r\n  padding: 2rem;\r\n  border-radius: 8px;\r\n  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);\n}\r\n\r\n/* Main page scrollable container */\n.page-content[data-v-5a6294fe] {\r\n  max-height: calc(100vh - 100px);\r\n  overflow-y: auto;\r\n  padding-right: 10px;\n}\n.page-content[data-v-5a6294fe]::-webkit-scrollbar {\r\n  width: 8px;\n}\n.page-content[data-v-5a6294fe]::-webkit-scrollbar-track {\r\n  background: #f1f1f1;\r\n  border-radius: 4px;\n}\n.page-content[data-v-5a6294fe]::-webkit-scrollbar-thumb {\r\n  background: #c1c1c1;\r\n  border-radius: 4px;\n}\n.page-content[data-v-5a6294fe]::-webkit-scrollbar-thumb:hover {\r\n  background: #a8a8a8;\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
