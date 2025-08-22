@@ -4,7 +4,7 @@
       <nav class="main-header navbar navbar-expand navbar-white navbar-light">
         <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+            <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i> <strong>Digitizing School Canteen Transactions: A POS-Based Solution for Efficient Payment Management</strong></a>
           </li>
         </ul>
         <ul class="navbar-nav ml-auto align-items-center">
@@ -50,9 +50,9 @@
       </div>
 
       <footer class="main-footer">
-        <strong>Copyright &copy; {{ currentYear }} POS.</strong>
+        <strong>Copyright &copy; {{ currentYear }} Digitizing School Canteen Transactions: A POS-Based Solution for Efficient Payment Management</strong>
         <div class="float-right d-none d-sm-inline-block">
-          <b>Version</b> 1.0.0
+          <b>Version</b> 1.0.3
         </div>
       </footer>
     </div>
