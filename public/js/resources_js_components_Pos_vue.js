@@ -32,6 +32,9 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         amount: 0
       },
       placeholder: '/images/placeholder.svg',
+      isLoading: true,
+      isCheckoutLoading: false,
+      showQRModal: false,
       cartFields: [{
         key: 'name',
         label: 'Item'
@@ -57,6 +60,9 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       payOptions: [{
         value: 'mobile',
         text: 'GCash'
+      }, {
+        value: 'cash',
+        text: 'Cash'
       }]
     };
   },
@@ -75,34 +81,68 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
     amountState: function amountState() {
       if (this.payment.amount === null || this.payment.amount === undefined) return null;
       return this.payment.amount >= this.total && this.total > 0;
+    },
+    change: function change() {
+      if (this.payment.method === 'cash' && this.payment.amount > this.total) {
+        return this.payment.amount - this.total;
+      }
+      return 0;
     }
   },
   created: function created() {
     this.loadProducts();
   },
   methods: {
+    openQRModal: function openQRModal() {
+      this.showQRModal = true;
+    },
     loadProducts: function loadProducts() {
       var _this = this;
       return _asyncToGenerator(/*#__PURE__*/_regenerator().m(function _callee() {
-        var res, _t;
+        var startTime, minLoadingTime, res, elapsedTime, _t;
         return _regenerator().w(function (_context) {
           while (1) switch (_context.p = _context.n) {
             case 0:
-              _context.p = 0;
-              _context.n = 1;
+              _this.isLoading = true;
+              startTime = Date.now();
+              minLoadingTime = 800; // Minimum loading time in milliseconds
+              _context.p = 1;
+              _context.n = 2;
               return axios__WEBPACK_IMPORTED_MODULE_1___default().get('/api/products');
-            case 1:
+            case 2:
               res = _context.v;
               _this.products = res.data.data || [];
+
+              // Ensure minimum loading time for better UX
+              elapsedTime = Date.now() - startTime;
+              if (!(elapsedTime < minLoadingTime)) {
+                _context.n = 3;
+                break;
+              }
               _context.n = 3;
-              break;
-            case 2:
-              _context.p = 2;
-              _t = _context.v;
+              return new Promise(function (resolve) {
+                return setTimeout(resolve, minLoadingTime - elapsedTime);
+              });
             case 3:
+              _context.n = 5;
+              break;
+            case 4:
+              _context.p = 4;
+              _t = _context.v;
+              console.error('Error loading products:', _t);
+              sweetalert2__WEBPACK_IMPORTED_MODULE_0___default().fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Failed to load products. Please refresh the page.'
+              });
+            case 5:
+              _context.p = 5;
+              _this.isLoading = false;
+              return _context.f(5);
+            case 6:
               return _context.a(2);
           }
-        }, _callee, null, [[0, 2]]);
+        }, _callee, null, [[1, 4, 5, 6]]);
       }))();
     },
     addProduct: function addProduct(p) {
@@ -127,12 +167,13 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         return _regenerator().w(function (_context2) {
           while (1) switch (_context2.p = _context2.n) {
             case 0:
-              if (_this2.cart.length) {
+              if (!(!_this2.cart.length || _this2.isCheckoutLoading)) {
                 _context2.n = 1;
                 break;
               }
               return _context2.a(2);
             case 1:
+              _this2.isCheckoutLoading = true;
               payload = {
                 items: _this2.cart.map(function (l) {
                   return {
@@ -176,9 +217,13 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
                 text: msg
               });
             case 5:
+              _context2.p = 5;
+              _this2.isCheckoutLoading = false;
+              return _context2.f(5);
+            case 6:
               return _context2.a(2);
           }
-        }, _callee2, null, [[2, 4]]);
+        }, _callee2, null, [[2, 4, 5, 6]]);
       }))();
     },
     generateReceiptHtml: function generateReceiptHtml(sale) {
@@ -186,11 +231,15 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
         return "<tr><td>".concat(l.name, "</td><td style=\"text-align:right;\">").concat(l.quantity, "</td><td style=\"text-align:right;\">").concat(l.unit_price.toFixed(2), "</td><td style=\"text-align:right;\">").concat((l.quantity * l.unit_price).toFixed(2), "</td></tr>");
       }).join('');
       var total = this.total.toFixed(2);
+      var paymentMethod = this.payment.method === 'mobile' ? 'GCash' : 'Cash';
+      var amountPaid = this.payment.amount.toFixed(2);
+      var change = this.change.toFixed(2);
       var now = new Date();
       var y = now.getFullYear(),
         m = String(now.getMonth() + 1).padStart(2, '0'),
         d = String(now.getDate()).padStart(2, '0');
-      return "<!doctype html><html><head><meta charset=\"utf-8\"><title>Receipt</title>\n        <style>body{font-family:Arial,sans-serif;padding:16px;} h2{margin:0 0 8px;} table{width:100%;border-collapse:collapse;} td,th{padding:6px;border-bottom:1px solid #eee;} th{text-align:left;} .tot{font-weight:bold;}</style>\n      </head><body>\n        <h2>Receipt</h2>\n        <div>Date: ".concat(y, "-").concat(m, "-").concat(d, "</div>\n        <hr/>\n        <table>\n          <thead><tr><th>Item</th><th style=\"text-align:right;\">Qty</th><th style=\"text-align:right;\">Price</th><th style=\"text-align:right;\">Total</th></tr></thead>\n          <tbody>").concat(lines, "</tbody>\n          <tfoot><tr><td colspan=\"3\" class=\"tot\" style=\"text-align:right;\">Grand Total</td><td class=\"tot\" style=\"text-align:right;\">").concat(total, "</td></tr></tfoot>\n        </table>\n      </body></html>");
+      var time = now.toLocaleTimeString();
+      return "<!doctype html><html><head><meta charset=\"utf-8\"><title>Receipt</title>\n        <style>\n          body{font-family:Arial,sans-serif;padding:16px;max-width:400px;margin:0 auto;}\n          h2{margin:0 0 8px;text-align:center;color:#333;}\n          .receipt-header{text-align:center;margin-bottom:20px;border-bottom:2px solid #333;padding-bottom:10px;}\n          .receipt-info{text-align:center;margin-bottom:15px;color:#666;}\n          table{width:100%;border-collapse:collapse;margin-bottom:20px;}\n          td,th{padding:8px;border-bottom:1px solid #eee;text-align:left;}\n          th{background-color:#f8f9fa;font-weight:bold;}\n          .tot{font-weight:bold;background-color:#f8f9fa;}\n          .payment-info{margin-top:20px;padding:15px;background-color:#f8f9fa;border-radius:8px;}\n          .payment-row{display:flex;justify-content:space-between;margin-bottom:8px;}\n          .change-row{color:#28a745;font-weight:bold;font-size:1.1em;}\n          .footer{text-align:center;margin-top:20px;color:#666;font-size:0.9em;border-top:1px solid #eee;padding-top:15px;}\n        </style>\n      </head><body>\n        <div class=\"receipt-header\">\n          <h2>RECEIPT</h2>\n          <div class=\"receipt-info\">\n            <div>Date: ".concat(y, "-").concat(m, "-").concat(d, "</div>\n            <div>Time: ").concat(time, "</div>\n          </div>\n        </div>\n        \n        <table>\n          <thead><tr><th>Item</th><th style=\"text-align:right;\">Qty</th><th style=\"text-align:right;\">Price</th><th style=\"text-align:right;\">Total</th></tr></thead>\n          <tbody>").concat(lines, "</tbody>\n          <tfoot><tr><td colspan=\"3\" class=\"tot\" style=\"text-align:right;\">Grand Total</td><td class=\"tot\" style=\"text-align:right;\">\u20B1").concat(total, "</td></tr></tfoot>\n        </table>\n        \n        <div class=\"payment-info\">\n          <div class=\"payment-row\">\n            <span>Payment Method:</span>\n            <span><strong>").concat(paymentMethod, "</strong></span>\n          </div>\n          <div class=\"payment-row\">\n            <span>Amount Paid:</span>\n            <span><strong>\u20B1").concat(amountPaid, "</strong></span>\n          </div>\n          ").concat(this.payment.method === 'cash' && this.change > 0 ? "<div class=\"payment-row change-row\">\n            <span>Change:</span>\n            <span><strong>\u20B1".concat(change, "</strong></span>\n          </div>") : '', "\n        </div>\n        \n        <div class=\"footer\">\n          Thank you for your purchase!<br>\n          Please come again.\n        </div>\n      </body></html>");
     },
     openPrintWindow: function openPrintWindow(html) {
       var w = window.open('', 'PRINT', 'height=600,width=800');
@@ -240,11 +289,54 @@ var render = function render() {
     attrs: {
       fluid: ""
     }
-  }, [_c("b-row", [_c("b-col", {
+  }, [_vm.isLoading ? _c("div", {
+    staticClass: "loading-overlay"
+  }, [_c("div", {
+    staticClass: "loading-spinner"
+  }, [_c("div", {
+    staticClass: "spinner-border text-primary",
+    staticStyle: {
+      width: "3rem",
+      height: "3rem"
+    },
+    attrs: {
+      role: "status"
+    }
+  }, [_c("span", {
+    staticClass: "sr-only"
+  }, [_vm._v("Loading...")])]), _vm._v(" "), _c("div", {
+    staticClass: "mt-3"
+  }, [_vm._v("Loading products...")])])]) : _vm._e(), _vm._v(" "), _c("b-row", [_c("b-col", {
     attrs: {
       lg: "8"
     }
-  }, [_c("b-row", _vm._l(_vm.products, function (p) {
+  }, [_vm.isLoading ? _c("div", {
+    staticClass: "loading-skeleton"
+  }, [_c("b-row", _vm._l(8, function (n) {
+    return _c("b-col", {
+      key: n,
+      staticClass: "mb-3",
+      attrs: {
+        sm: "6",
+        md: "3"
+      }
+    }, [_c("b-card", {
+      staticClass: "product-card h-100 skeleton-card",
+      attrs: {
+        "no-body": ""
+      }
+    }, [_c("div", {
+      staticClass: "product-image-container skeleton-image"
+    }), _vm._v(" "), _c("div", {
+      staticClass: "product-info skeleton-info"
+    }, [_c("div", {
+      staticClass: "skeleton-title"
+    }), _vm._v(" "), _c("div", {
+      staticClass: "skeleton-price"
+    }), _vm._v(" "), _c("div", {
+      staticClass: "skeleton-button"
+    })])])], 1);
+  }), 1)], 1) : _c("b-row", _vm._l(_vm.products, function (p) {
     return _c("b-col", {
       key: p.id,
       staticClass: "mb-3",
@@ -380,16 +472,70 @@ var render = function render() {
       proxy: true
     }])
   }, [_vm._v(" "), _c("b-card-body", [_c("b-form-group", {
+    staticClass: "mb-3",
     attrs: {
-      label: "GCash Amount"
+      label: "Payment Method"
+    }
+  }, [_c("b-form-radio-group", {
+    attrs: {
+      name: "payment-method"
+    },
+    model: {
+      value: _vm.payment.method,
+      callback: function callback($$v) {
+        _vm.$set(_vm.payment, "method", $$v);
+      },
+      expression: "payment.method"
+    }
+  }, [_c("b-form-radio", {
+    staticClass: "mb-2",
+    attrs: {
+      value: "mobile"
+    }
+  }, [_c("i", {
+    staticClass: "fas fa-mobile-alt me-2 text-success"
+  }), _vm._v("GCash\n              ")]), _vm._v(" "), _c("b-form-radio", {
+    staticClass: "mb-2",
+    attrs: {
+      value: "cash"
+    }
+  }, [_c("i", {
+    staticClass: "fas fa-money-bill-wave me-2 text-success"
+  }), _vm._v("Cash\n              ")])], 1)], 1), _vm._v(" "), _vm.payment.method === "mobile" ? _c("div", {
+    staticClass: "text-center mb-3"
+  }, [_c("div", {
+    staticClass: "qr-code-container"
+  }, [_c("img", {
+    staticClass: "qr-code-image",
+    attrs: {
+      src: "https://res.cloudinary.com/dkcjftn5c/image/upload/v1755828253/sample_gcash_zowrty.png",
+      alt: "GCash QR Code"
+    }
+  }), _vm._v(" "), _c("div", {
+    staticClass: "qr-code-label mt-2"
+  }, [_vm._v("Scan QR Code to Pay")]), _vm._v(" "), _c("b-button", {
+    staticClass: "mt-2",
+    attrs: {
+      variant: "outline-primary",
+      size: "sm"
+    },
+    on: {
+      click: _vm.openQRModal
+    }
+  }, [_c("i", {
+    staticClass: "fas fa-expand-alt me-1"
+  }), _vm._v(" View QR Code\n              ")])], 1)]) : _vm._e(), _vm._v(" "), _c("b-form-group", {
+    attrs: {
+      label: _vm.payment.method === "mobile" ? "GCash Amount" : "Cash Amount"
     }
   }, [_c("b-input-group", [_c("b-input-group-prepend", [_c("b-input-group-text", [_vm._v("₱")])], 1), _vm._v(" "), _c("b-form-input", {
     attrs: {
       type: "number",
-      placeholder: "0.00",
+      placeholder: _vm.payment.method === "mobile" ? "0.00" : "0.00",
       step: "0.01",
       min: "0",
-      state: _vm.amountState
+      state: _vm.amountState,
+      disabled: _vm.isCheckoutLoading
     },
     model: {
       value: _vm.payment.amount,
@@ -398,16 +544,62 @@ var render = function render() {
       },
       expression: "payment.amount"
     }
-  })], 1), _vm._v(" "), _vm.amountState === false ? _c("b-form-invalid-feedback", [_vm._v("\n              Amount must be at least " + _vm._s(_vm.total.toFixed(2)) + "\n            ")]) : _vm._e()], 1), _vm._v(" "), _c("b-button", {
+  })], 1), _vm._v(" "), _vm.amountState === false ? _c("b-form-invalid-feedback", [_vm._v("\n              Amount must be at least " + _vm._s(_vm.total.toFixed(2)) + "\n            ")]) : _vm._e()], 1), _vm._v(" "), _vm.payment.method === "cash" && _vm.payment.amount > _vm.total && _vm.total > 0 ? _c("div", {
+    staticClass: "change-display mb-3"
+  }, [_c("div", {
+    staticClass: "d-flex justify-content-between align-items-center p-3 bg-light rounded"
+  }, [_c("span", {
+    staticClass: "font-weight-bold"
+  }, [_vm._v("Change:")]), _vm._v(" "), _c("span", {
+    staticClass: "text-success font-weight-bold fs-5"
+  }, [_vm._v("₱" + _vm._s(_vm.change.toFixed(2)))])])]) : _vm._e(), _vm._v(" "), _c("b-button", {
+    "class": {
+      "loading-button": _vm.isCheckoutLoading
+    },
     attrs: {
       variant: "success",
       block: "",
-      disabled: !_vm.cart.length || !_vm.isPaymentValid
+      disabled: !_vm.cart.length || !_vm.isPaymentValid || _vm.isCheckoutLoading
     },
     on: {
       click: _vm.checkout
     }
-  }, [_vm._v("Complete Sale")])], 1)], 1)], 1)], 1)], 1);
+  }, [_vm.isCheckoutLoading ? _c("span", [_c("span", {
+    staticClass: "spinner-border spinner-border-sm me-2",
+    attrs: {
+      role: "status",
+      "aria-hidden": "true"
+    }
+  }), _vm._v("\n              Processing...\n            ")]) : _c("span", [_vm._v("Complete Sale")])])], 1)], 1)], 1)], 1), _vm._v(" "), _c("b-modal", {
+    staticClass: "qr-modal",
+    attrs: {
+      title: "GCash QR Code",
+      size: "xl",
+      centered: "",
+      "hide-footer": ""
+    },
+    model: {
+      value: _vm.showQRModal,
+      callback: function callback($$v) {
+        _vm.showQRModal = $$v;
+      },
+      expression: "showQRModal"
+    }
+  }, [_c("div", {
+    staticClass: "text-center"
+  }, [_c("div", {
+    staticClass: "qr-modal-container"
+  }, [_c("img", {
+    staticClass: "qr-modal-image",
+    attrs: {
+      src: "https://res.cloudinary.com/dkcjftn5c/image/upload/v1755828253/sample_gcash_zowrty.png",
+      alt: "GCash QR Code"
+    }
+  }), _vm._v(" "), _c("div", {
+    staticClass: "qr-modal-instructions mt-3"
+  }, [_c("h5", [_vm._v("Scan this QR Code with your GCash app")]), _vm._v(" "), _c("p", {
+    staticClass: "text-muted"
+  }, [_vm._v("Open your GCash app and tap the scan button to pay")])])])])])], 1);
 };
 var staticRenderFns = [];
 render._withStripped = true;
@@ -432,7 +624,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.product-card[data-v-0349ff8e] { \r\n  border: none; \r\n  border-radius: 12px; \r\n  overflow: hidden; \r\n  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);\r\n  transition: all 0.3s ease;\r\n  background: #fff;\n}\n.product-card[data-v-0349ff8e]:hover {\r\n  transform: translateY(-2px);\r\n  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);\n}\n.product-image-container[data-v-0349ff8e] { \r\n  position: relative; \r\n  width: 100%; \r\n  height: 180px; \r\n  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);\r\n  padding: 12px;\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: center;\n}\n.product-thumb[data-v-0349ff8e] { \r\n  width: 100%; \r\n  height: 100%; \r\n  -o-object-fit: contain; \r\n     object-fit: contain;\r\n  border-radius: 8px;\n}\n.product-info[data-v-0349ff8e] { \r\n  background: linear-gradient(135deg, #374151 0%, #4b5563 100%);\r\n  color: #fff;\r\n  padding: 16px;\r\n  position: relative;\n}\n.product-title[data-v-0349ff8e] { \r\n  font-weight: 600; \r\n  font-size: 1rem; \r\n  margin-bottom: 8px;\r\n  color: #f9fafb;\r\n  line-height: 1.3;\n}\n.product-price[data-v-0349ff8e] { \r\n  font-size: 1.25rem; \r\n  font-weight: bold; \r\n  margin-bottom: 12px;\r\n  color: #10b981;\r\n  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);\n}\n.add-btn[data-v-0349ff8e] { \r\n  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);\r\n  border: none;\r\n  color: #fff;\r\n  padding: 8px 16px;\r\n  border-radius: 8px;\r\n  font-weight: 600;\r\n  transition: all 0.2s ease;\r\n  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);\n}\n.add-btn[data-v-0349ff8e]:hover {\r\n  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);\r\n  transform: translateY(-1px);\r\n  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);\n}\n.add-btn i[data-v-0349ff8e] { \r\n  margin-right: 6px;\n}\n@media (min-width: 992px) { /* lg */\n.product-image-container[data-v-0349ff8e] { height: 200px;\n}\n}\n@media (max-width: 575.98px) {\n.product-image-container[data-v-0349ff8e] { height: 160px;\n}\n.product-info[data-v-0349ff8e] { padding: 12px;\n}\n.product-title[data-v-0349ff8e] { font-size: 0.9rem;\n}\n.product-price[data-v-0349ff8e] { font-size: 1.1rem;\n}\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.loading-overlay[data-v-0349ff8e] {\r\n  position: fixed;\r\n  top: 0;\r\n  left: 0;\r\n  width: 100%;\r\n  height: 100%;\r\n  background: rgba(255, 255, 255, 0.95);\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: center;\r\n  z-index: 9999;\n}\n.loading-spinner[data-v-0349ff8e] {\r\n  text-align: center;\r\n  background: white;\r\n  padding: 2rem;\r\n  border-radius: 12px;\r\n  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);\n}\n.loading-skeleton[data-v-0349ff8e] {\r\n  width: 100%;\n}\n.skeleton-card[data-v-0349ff8e] {\r\n  border: none;\r\n  border-radius: 12px;\r\n  overflow: hidden;\r\n  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);\n}\n.skeleton-image[data-v-0349ff8e] {\r\n  height: 180px;\r\n  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);\r\n  background-size: 200% 100%;\r\n  animation: loading-0349ff8e 1.5s infinite;\n}\n.skeleton-info[data-v-0349ff8e] {\r\n  background: #f8f9fa;\r\n  padding: 16px;\n}\n.skeleton-title[data-v-0349ff8e] {\r\n  height: 16px;\r\n  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);\r\n  background-size: 200% 100%;\r\n  animation: loading-0349ff8e 1.5s infinite;\r\n  margin-bottom: 8px;\r\n  border-radius: 4px;\n}\n.skeleton-price[data-v-0349ff8e] {\r\n  height: 20px;\r\n  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);\r\n  background-size: 200% 100%;\r\n  animation: loading-0349ff8e 1.5s infinite;\r\n  margin-bottom: 12px;\r\n  border-radius: 4px;\r\n  width: 60%;\n}\n.skeleton-button[data-v-0349ff8e] {\r\n  height: 32px;\r\n  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);\r\n  background-size: 200% 100%;\r\n  animation: loading-0349ff8e 1.5s infinite;\r\n  border-radius: 8px;\r\n  width: 100%;\n}\n@keyframes loading-0349ff8e {\n0% {\r\n    background-position: 200% 0;\n}\n100% {\r\n    background-position: -200% 0;\n}\n}\n.loading-button[data-v-0349ff8e] {\r\n  position: relative;\r\n  pointer-events: none;\n}\n.loading-button[data-v-0349ff8e]:disabled {\r\n  opacity: 0.8;\n}\n.qr-code-container[data-v-0349ff8e] {\r\n  background: #f8f9fa;\r\n  padding: 20px;\r\n  border-radius: 12px;\r\n  border: 2px dashed #dee2e6;\n}\n.qr-code-image[data-v-0349ff8e] {\r\n  width: 150px;\r\n  height: 150px;\r\n  -o-object-fit: contain;\r\n     object-fit: contain;\r\n  border-radius: 8px;\r\n  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);\n}\n.qr-code-label[data-v-0349ff8e] {\r\n  color: #6c757d;\r\n  font-weight: 600;\r\n  font-size: 0.9rem;\n}\n.qr-modal-container[data-v-0349ff8e] {\r\n  padding: 20px;\n}\n.qr-modal-image[data-v-0349ff8e] {\r\n  width: 300px;\r\n  height: 300px;\r\n  -o-object-fit: contain;\r\n     object-fit: contain;\r\n  border-radius: 12px;\r\n  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);\n}\n.qr-modal-instructions h5[data-v-0349ff8e] {\r\n  color: #28a745;\r\n  margin-bottom: 10px;\n}\n.change-display[data-v-0349ff8e] {\r\n  animation: fadeIn-0349ff8e 0.3s ease-in;\n}\n@keyframes fadeIn-0349ff8e {\nfrom { opacity: 0; transform: translateY(-10px);\n}\nto { opacity: 1; transform: translateY(0);\n}\n}\n.product-card[data-v-0349ff8e] { \r\n  border: none; \r\n  border-radius: 12px; \r\n  overflow: hidden; \r\n  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);\r\n  transition: all 0.3s ease;\r\n  background: #fff;\n}\n.product-card[data-v-0349ff8e]:hover {\r\n  transform: translateY(-2px);\r\n  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);\n}\n.product-image-container[data-v-0349ff8e] { \r\n  position: relative; \r\n  width: 100%; \r\n  height: 180px; \r\n  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);\r\n  padding: 12px;\r\n  display: flex;\r\n  align-items: center;\r\n  justify-content: center;\n}\n.product-thumb[data-v-0349ff8e] { \r\n  width: 100%; \r\n  height: 100%; \r\n  -o-object-fit: contain; \r\n     object-fit: contain;\r\n  border-radius: 8px;\n}\n.product-info[data-v-0349ff8e] { \r\n  background: linear-gradient(135deg, #374151 0%, #4b5563 100%);\r\n  color: #fff;\r\n  padding: 16px;\r\n  position: relative;\n}\n.product-title[data-v-0349ff8e] { \r\n  font-weight: 600; \r\n  font-size: 1rem; \r\n  margin-bottom: 8px;\r\n  color: #f9fafb;\r\n  line-height: 1.3;\n}\n.product-price[data-v-0349ff8e] { \r\n  font-size: 1.25rem; \r\n  font-weight: bold; \r\n  margin-bottom: 12px;\r\n  color: #10b981;\r\n  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);\n}\n.add-btn[data-v-0349ff8e] { \r\n  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);\r\n  border: none;\r\n  color: #fff;\r\n  color: #fff;\r\n  padding: 8px 16px;\r\n  border-radius: 8px;\r\n  font-weight: 600;\r\n  transition: all 0.2s ease;\r\n  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);\n}\n.add-btn[data-v-0349ff8e]:hover {\r\n  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);\r\n  transform: translateY(-1px);\r\n  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);\n}\n.add-btn i[data-v-0349ff8e] { \r\n  margin-right: 6px;\n}\n@media (min-width: 992px) { /* lg */\n.product-image-container[data-v-0349ff8e] { height: 200px;\n}\n.skeleton-image[data-v-0349ff8e] { height: 200px;\n}\n}\n@media (max-width: 575.98px) {\n.product-image-container[data-v-0349ff8e] { height: 160px;\n}\n.skeleton-image[data-v-0349ff8e] { height: 160px;\n}\n.product-info[data-v-0349ff8e] { padding: 12px;\n}\n.skeleton-info[data-v-0349ff8e] { padding: 12px;\n}\n.product-title[data-v-0349ff8e] { font-size: 0.9rem;\n}\n.product-price[data-v-0349ff8e] { font-size: 1.1rem;\n}\n.qr-code-image[data-v-0349ff8e] { width: 120px; height: 120px;\n}\n.qr-modal-image[data-v-0349ff8e] { width: 250px; height: 250px;\n}\n}\r\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 

@@ -104,18 +104,73 @@ export default {
       const lines = items.map(l => `<tr><td>${l.name}</td><td style="text-align:right;">${l.qty}</td><td style="text-align:right;">${l.price.toFixed(2)}</td><td style="text-align:right;">${(l.qty*l.price).toFixed(2)}</td></tr>`).join('')
       const total = Number(sale.total || 0).toFixed(2)
       const paid = this.formatDate(sale.paid_at)
+      const time = sale.paid_at ? new Date(sale.paid_at).toLocaleTimeString() : ''
+      
+      // Get payment information
+      const payments = sale.payments || []
+      const paymentMethod = payments.length > 0 ? this.getPaymentMethodDisplay(payments[0].method) : 'Unknown'
+      const amountPaid = payments.length > 0 ? Number(payments[0].amount).toFixed(2) : total
+      const change = payments.length > 0 && payments[0].method === 'cash' ? (Number(payments[0].amount) - Number(total)).toFixed(2) : '0.00'
+      
       return `<!doctype html><html><head><meta charset="utf-8"><title>Receipt</title>
-        <style>body{font-family:Arial,sans-serif;padding:16px;} h2{margin:0 0 8px;} table{width:100%;border-collapse:collapse;} td,th{padding:6px;border-bottom:1px solid #eee;} th{text-align:left;} .tot{font-weight:bold;}</style>
+        <style>
+          body{font-family:Arial,sans-serif;padding:16px;max-width:400px;margin:0 auto;}
+          h2{margin:0 0 8px;text-align:center;color:#333;}
+          .receipt-header{text-align:center;margin-bottom:20px;border-bottom:2px solid #333;padding-bottom:10px;}
+          .receipt-info{text-align:center;margin-bottom:15px;color:#666;}
+          table{width:100%;border-collapse:collapse;margin-bottom:20px;}
+          td,th{padding:8px;border-bottom:1px solid #eee;text-align:left;}
+          th{background-color:#f8f9fa;font-weight:bold;}
+          .tot{font-weight:bold;background-color:#f8f9fa;}
+          .payment-info{margin-top:20px;padding:15px;background-color:#f8f9fa;border-radius:8px;}
+          .payment-row{display:flex;justify-content:space-between;margin-bottom:8px;}
+          .change-row{color:#28a745;font-weight:bold;font-size:1.1em;}
+          .footer{text-align:center;margin-top:20px;color:#666;font-size:0.9em;border-top:1px solid #eee;padding-top:15px;}
+        </style>
       </head><body>
-        <h2>Receipt</h2>
-        <div>Date: ${paid}</div>
-        <hr/>
+        <div class="receipt-header">
+          <h2>RECEIPT</h2>
+          <div class="receipt-info">
+            <div>Date: ${paid}</div>
+            ${time ? `<div>Time: ${time}</div>` : ''}
+          </div>
+        </div>
+        
         <table>
           <thead><tr><th>Item</th><th style="text-align:right;">Qty</th><th style="text-align:right;">Price</th><th style="text-align:right;">Total</th></tr></thead>
           <tbody>${lines}</tbody>
-          <tfoot><tr><td colspan="3" class="tot" style="text-align:right;">Grand Total</td><td class="tot" style="text-align:right;">${total}</td></tr></tfoot>
+          <tfoot><tr><td colspan="3" class="tot" style="text-align:right;">Grand Total</td><td class="tot" style="text-align:right;">₱${total}</td></tr></tfoot>
         </table>
+        
+        <div class="payment-info">
+          <div class="payment-row">
+            <span>Payment Method:</span>
+            <span><strong>${paymentMethod}</strong></span>
+          </div>
+          <div class="payment-row">
+            <span>Amount Paid:</span>
+            <span><strong>₱${amountPaid}</strong></span>
+          </div>
+          ${payments.length > 0 && payments[0].method === 'cash' && Number(change) > 0 ? `<div class="payment-row change-row">
+            <span>Change:</span>
+            <span><strong>₱${change}</strong></span>
+          </div>` : ''}
+        </div>
+        
+        <div class="footer">
+          Thank you for your purchase!<br>
+          Please come again.
+        </div>
       </body></html>`
+    },
+    getPaymentMethodDisplay(method) {
+      const methodMap = {
+        'cash': 'Cash',
+        'card': 'Card',
+        'mobile': 'GCash',
+        'other': 'Other'
+      }
+      return methodMap[method] || method
     },
     openPrintWindow(html) {
       const w = window.open('', 'PRINT', 'height=600,width=800');

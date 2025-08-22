@@ -124,7 +124,23 @@ function _asyncToGenerator(n) { return function () { var t = this, e = arguments
       }).join('');
       var total = Number(sale.total || 0).toFixed(2);
       var paid = this.formatDate(sale.paid_at);
-      return "<!doctype html><html><head><meta charset=\"utf-8\"><title>Receipt</title>\n        <style>body{font-family:Arial,sans-serif;padding:16px;} h2{margin:0 0 8px;} table{width:100%;border-collapse:collapse;} td,th{padding:6px;border-bottom:1px solid #eee;} th{text-align:left;} .tot{font-weight:bold;}</style>\n      </head><body>\n        <h2>Receipt</h2>\n        <div>Date: ".concat(paid, "</div>\n        <hr/>\n        <table>\n          <thead><tr><th>Item</th><th style=\"text-align:right;\">Qty</th><th style=\"text-align:right;\">Price</th><th style=\"text-align:right;\">Total</th></tr></thead>\n          <tbody>").concat(lines, "</tbody>\n          <tfoot><tr><td colspan=\"3\" class=\"tot\" style=\"text-align:right;\">Grand Total</td><td class=\"tot\" style=\"text-align:right;\">").concat(total, "</td></tr></tfoot>\n        </table>\n      </body></html>");
+      var time = sale.paid_at ? new Date(sale.paid_at).toLocaleTimeString() : '';
+
+      // Get payment information
+      var payments = sale.payments || [];
+      var paymentMethod = payments.length > 0 ? this.getPaymentMethodDisplay(payments[0].method) : 'Unknown';
+      var amountPaid = payments.length > 0 ? Number(payments[0].amount).toFixed(2) : total;
+      var change = payments.length > 0 && payments[0].method === 'cash' ? (Number(payments[0].amount) - Number(total)).toFixed(2) : '0.00';
+      return "<!doctype html><html><head><meta charset=\"utf-8\"><title>Receipt</title>\n        <style>\n          body{font-family:Arial,sans-serif;padding:16px;max-width:400px;margin:0 auto;}\n          h2{margin:0 0 8px;text-align:center;color:#333;}\n          .receipt-header{text-align:center;margin-bottom:20px;border-bottom:2px solid #333;padding-bottom:10px;}\n          .receipt-info{text-align:center;margin-bottom:15px;color:#666;}\n          table{width:100%;border-collapse:collapse;margin-bottom:20px;}\n          td,th{padding:8px;border-bottom:1px solid #eee;text-align:left;}\n          th{background-color:#f8f9fa;font-weight:bold;}\n          .tot{font-weight:bold;background-color:#f8f9fa;}\n          .payment-info{margin-top:20px;padding:15px;background-color:#f8f9fa;border-radius:8px;}\n          .payment-row{display:flex;justify-content:space-between;margin-bottom:8px;}\n          .change-row{color:#28a745;font-weight:bold;font-size:1.1em;}\n          .footer{text-align:center;margin-top:20px;color:#666;font-size:0.9em;border-top:1px solid #eee;padding-top:15px;}\n        </style>\n      </head><body>\n        <div class=\"receipt-header\">\n          <h2>RECEIPT</h2>\n          <div class=\"receipt-info\">\n            <div>Date: ".concat(paid, "</div>\n            ").concat(time ? "<div>Time: ".concat(time, "</div>") : '', "\n          </div>\n        </div>\n        \n        <table>\n          <thead><tr><th>Item</th><th style=\"text-align:right;\">Qty</th><th style=\"text-align:right;\">Price</th><th style=\"text-align:right;\">Total</th></tr></thead>\n          <tbody>").concat(lines, "</tbody>\n          <tfoot><tr><td colspan=\"3\" class=\"tot\" style=\"text-align:right;\">Grand Total</td><td class=\"tot\" style=\"text-align:right;\">\u20B1").concat(total, "</td></tr></tfoot>\n        </table>\n        \n        <div class=\"payment-info\">\n          <div class=\"payment-row\">\n            <span>Payment Method:</span>\n            <span><strong>").concat(paymentMethod, "</strong></span>\n          </div>\n          <div class=\"payment-row\">\n            <span>Amount Paid:</span>\n            <span><strong>\u20B1").concat(amountPaid, "</strong></span>\n          </div>\n          ").concat(payments.length > 0 && payments[0].method === 'cash' && Number(change) > 0 ? "<div class=\"payment-row change-row\">\n            <span>Change:</span>\n            <span><strong>\u20B1".concat(change, "</strong></span>\n          </div>") : '', "\n        </div>\n        \n        <div class=\"footer\">\n          Thank you for your purchase!<br>\n          Please come again.\n        </div>\n      </body></html>");
+    },
+    getPaymentMethodDisplay: function getPaymentMethodDisplay(method) {
+      var methodMap = {
+        'cash': 'Cash',
+        'card': 'Card',
+        'mobile': 'GCash',
+        'other': 'Other'
+      };
+      return methodMap[method] || method;
     },
     openPrintWindow: function openPrintWindow(html) {
       var w = window.open('', 'PRINT', 'height=600,width=800');
