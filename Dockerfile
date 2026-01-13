@@ -101,6 +101,10 @@ fi\n\
 echo "Running database migrations..."\n\
 php artisan migrate --force || echo "Migration failed, continuing..."\n\
 \n\
+# Create admin user if no users exist (using artisan command)\n\
+echo "Checking for admin user..."\n\
+php artisan user:create-admin --name="Admin" --email="admin@example.com" --password="admin123" 2>/dev/null || echo "Admin user already exists or creation skipped."\n\
+\n\
 # Clear and cache config\n\
 echo "Optimizing application..."\n\
 php artisan config:cache || echo "Config cache failed, continuing..."\n\

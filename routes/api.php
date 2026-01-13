@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\ReportController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\SetupController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,6 +21,9 @@ use App\Http\Controllers\Api\UserController;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+
+// Setup route (only works if no users exist - one-time setup)
+Route::post('/setup/create-admin', [SetupController::class, 'createAdmin']);
 
 // Auth routes
 Route::post('/login', [AuthController::class, 'login']);
