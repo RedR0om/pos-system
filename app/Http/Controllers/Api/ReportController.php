@@ -51,7 +51,7 @@ class ReportController extends Controller
         $rows = \App\Models\Sale::selectRaw('DATE(created_at) as d, SUM(total) as t')
             ->whereBetween('created_at', [$from, $to])
             ->where('status', 'paid')
-            ->groupBy('d')
+            ->groupByRaw('DATE(created_at)')
             ->orderBy('d')
             ->get();
             
@@ -92,7 +92,7 @@ class ReportController extends Controller
         }
         
         $query = \App\Models\SaleItem::query()
-            ->selectRaw('COALESCE(categories.name, "Uncategorized") as category, SUM(sale_items.total) as t')
+            ->selectRaw('COALESCE(categories.name, \'Uncategorized\') as category, SUM(sale_items.total) as t')
             ->join('products', 'sale_items.product_id', '=', 'products.id')
             ->leftJoin('categories', 'products.category_id', '=', 'categories.id')
             ->join('sales', 'sale_items.sale_id', '=', 'sales.id')

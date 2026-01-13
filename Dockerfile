@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
     zip \
     unzip \
-    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
+    && docker-php-ext-install pdo_pgsql pdo_mysql mbstring exif pcntl bcmath gd zip
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -55,12 +55,12 @@ LOG_CHANNEL=stack\n\
 LOG_DEPRECATIONS_CHANNEL=null\n\
 LOG_LEVEL=debug\n\
 \n\
-DB_CONNECTION=mysql\n\
-DB_HOST=\${DB_HOST:-gondola.proxy.rlwy.net}\n\
-DB_PORT=\${DB_PORT:-14668}\n\
-DB_DATABASE=\${DB_DATABASE:-railway}\n\
-DB_USERNAME=\${DB_USERNAME:-root}\n\
-DB_PASSWORD=\${DB_PASSWORD:-BYwycoigujQGKRloFfbWIotCZfaIKWrZ}\n\
+DB_CONNECTION=\${DB_CONNECTION:-pgsql}\n\
+DB_HOST=\${DB_HOST:-127.0.0.1}\n\
+DB_PORT=\${DB_PORT:-5432}\n\
+DB_DATABASE=\${DB_DATABASE:-forge}\n\
+DB_USERNAME=\${DB_USERNAME:-forge}\n\
+DB_PASSWORD=\${DB_PASSWORD:-}\n\
 \n\
 CACHE_DRIVER=file\n\
 SESSION_DRIVER=file\n\
